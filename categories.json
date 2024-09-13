@@ -1,0 +1,43 @@
+{
+    "lang":"en",
+    "version":1,
+    "list": [
+        {
+            "title": "Family",
+            "picture": "https://loremflickr.com/640/480/abstract",
+            "list": [ 
+                1, 
+                2,
+                3
+            ]
+        },
+        {
+            "title": "Kitchen",
+            "picture": "https://loremflickr.com/640/480/abstract",
+            "list": [
+                1, 
+                2,
+                3
+            ]
+        },
+        {
+            "title": "Sport",
+            "picture": "https://loremflickr.com/640/480/abstract",
+            "list": [
+                1, 
+                2,
+                3
+            ]
+        },
+        {
+            "title": "Transport",
+            "picture": "https://loremflickr.com/640/480/abstract",
+            "list": [
+                1, 
+                2,
+                3
+            ]
+        }
+    ]
+}
+  
