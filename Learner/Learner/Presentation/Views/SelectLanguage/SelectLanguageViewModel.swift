@@ -33,10 +33,10 @@ class SelectLanguageViewModel: ObservableObject {
     func loadURLs() {
         Task { @MainActor in
             let upr: UserSettings = await appIntent.getUserSettings()!
-            await MainActor.run {
+//            await MainActor.run {
                 baseURL = upr.originURL
                 translateURL = upr.learnURL
-            }
+//            }
         }
     }
 

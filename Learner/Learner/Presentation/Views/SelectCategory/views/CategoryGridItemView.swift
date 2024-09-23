@@ -7,14 +7,24 @@
 
 import SwiftUI
 import Foundation
+import Combine
 
 struct CategoryGridItemView: View {
     let category: CategoryModel
+    @State var url:URL?
+    
+    func loadImage(){
+        Task{
+            let urlCache = await downloadFileDataTask(urlString: category.picture)
+            await MainActor.run {
+                self.url = urlCache
+            }
+        }
+    }
     
     var body: some View {
         VStack {
-            if let url = URL(string: category.picture) {
-                AsyncImage(url: url) { image in
+            AsyncImage(url: self.url) { image in
                     image
                         .resizable()
                         .scaledToFill()
@@ -23,17 +33,14 @@ struct CategoryGridItemView: View {
                 }
                 .frame(width: 100, height: 100)
                 .cornerRadius(10)
-            } else {
-                Color.gray
-                    .frame(width: 100, height: 100)
-                    .cornerRadius(10)
-            }
-            
             Text(category.title)
                 .font(.headline)
                 .padding(.top, 5)
         }
         .padding()
+        .onAppear {
+            loadImage()
+        }
     }
 }
 

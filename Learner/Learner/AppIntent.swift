@@ -133,16 +133,14 @@ class AppIntent: Intent {
     
     private func downloadImages(_ list: [CategoryModel]) async throws {
         DispatchQueue.global(qos: .background).async {
-            
-//                await withTaskGroup(of: Void.self) { group in
-                    for category in list {
-                        for card in category.list {
-//                            group.addTask {
-                            Task{
-                                _ = await downloadFileDataTask(urlString: card.picture ?? "")
-//                            }
-                        }
-//                    }
+            for category in list {
+                Task{
+                    _ = await downloadFileDataTask(urlString: category.picture)
+                }
+                for card in category.list {
+                    Task{
+                        _ = await downloadFileDataTask(urlString: card.picture ?? "")
+                    }
                 }
             }
         }
