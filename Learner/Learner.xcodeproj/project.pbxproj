@@ -21,6 +21,11 @@
 		4A77B1B02C9E387D00F89C9F /* ErrorPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1AF2C9E387D00F89C9F /* ErrorPopupView.swift */; };
 		4A77B1B22CA0B1BB00F89C9F /* Voice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1B12CA0B1BB00F89C9F /* Voice.swift */; };
 		4A77B1B42CA0BF6100F89C9F /* URLCacherHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1B32CA0BF6100F89C9F /* URLCacherHelper.swift */; };
+		4A77B1B72CA753B700F89C9F /* CardsQuizViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1B62CA753B700F89C9F /* CardsQuizViewModel.swift */; };
+		4A77B1B92CA753D700F89C9F /* CardsQuizScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1B82CA753D700F89C9F /* CardsQuizScreen.swift */; };
+		4A77B1BB2CA7589200F89C9F /* InteractionOptionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1BA2CA7589200F89C9F /* InteractionOptionScreen.swift */; };
+		4A77B1BD2CA75DEF00F89C9F /* CardsQuizModelInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1BC2CA75DEF00F89C9F /* CardsQuizModelInterface.swift */; };
+		4A77B1BF2CA75F1800F89C9F /* CardsQuizInvertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1BE2CA75F1800F89C9F /* CardsQuizInvertViewModel.swift */; };
 		4AA7B7F52C9B186E001F49D8 /* LearnerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA7B7F42C9B186E001F49D8 /* LearnerApp.swift */; };
 		4AA7B7F72C9B186E001F49D8 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA7B7F62C9B186E001F49D8 /* Persistence.swift */; };
 		4AA7B7FA2C9B186E001F49D8 /* Learner.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4AA7B7F82C9B186E001F49D8 /* Learner.xcdatamodeld */; };
@@ -102,6 +107,11 @@
 		4A77B1AF2C9E387D00F89C9F /* ErrorPopupView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorPopupView.swift; sourceTree = "<group>"; };
 		4A77B1B12CA0B1BB00F89C9F /* Voice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Voice.swift; sourceTree = "<group>"; };
 		4A77B1B32CA0BF6100F89C9F /* URLCacherHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCacherHelper.swift; sourceTree = "<group>"; };
+		4A77B1B62CA753B700F89C9F /* CardsQuizViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsQuizViewModel.swift; sourceTree = "<group>"; };
+		4A77B1B82CA753D700F89C9F /* CardsQuizScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsQuizScreen.swift; sourceTree = "<group>"; };
+		4A77B1BA2CA7589200F89C9F /* InteractionOptionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionOptionScreen.swift; sourceTree = "<group>"; };
+		4A77B1BC2CA75DEF00F89C9F /* CardsQuizModelInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsQuizModelInterface.swift; sourceTree = "<group>"; };
+		4A77B1BE2CA75F1800F89C9F /* CardsQuizInvertViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsQuizInvertViewModel.swift; sourceTree = "<group>"; };
 		4AA7B7F12C9B186E001F49D8 /* Learner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Learner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AA7B7F42C9B186E001F49D8 /* LearnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnerApp.swift; sourceTree = "<group>"; };
 		4AA7B7F62C9B186E001F49D8 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -217,6 +227,17 @@
 			path = SelectCategory;
 			sourceTree = "<group>";
 		};
+		4A77B1B52CA753AA00F89C9F /* CardsQuizView */ = {
+			isa = PBXGroup;
+			children = (
+				4A77B1B62CA753B700F89C9F /* CardsQuizViewModel.swift */,
+				4A77B1BC2CA75DEF00F89C9F /* CardsQuizModelInterface.swift */,
+				4A77B1B82CA753D700F89C9F /* CardsQuizScreen.swift */,
+				4A77B1BE2CA75F1800F89C9F /* CardsQuizInvertViewModel.swift */,
+			);
+			path = CardsQuizView;
+			sourceTree = "<group>";
+		};
 		4AA7B7E82C9B186E001F49D8 = {
 			isa = PBXGroup;
 			children = (
@@ -320,10 +341,12 @@
 		4AA7B8302C9B1893001F49D8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4A77B1B52CA753AA00F89C9F /* CardsQuizView */,
 				4A77B19E2C9DDB2700F89C9F /* CardsViewer */,
 				4A77B1A42C9DDB2700F89C9F /* SelectCategory */,
 				4A77B19B2C9DDB2700F89C9F /* SelectLanguage */,
 				4AA7B82D2C9B1893001F49D8 /* DetailScreen.swift */,
+				4A77B1BA2CA7589200F89C9F /* InteractionOptionScreen.swift */,
 				4AA7B82E2C9B1893001F49D8 /* ListScreen.swift */,
 				4AA7B82F2C9B1893001F49D8 /* MainView.swift */,
 				4AA7B86A2C9B199B001F49D8 /* SettingsScreen.swift */,
@@ -649,6 +672,7 @@
 				4AA7B8972C9B9B86001F49D8 /* CategoryModel.swift in Sources */,
 				4A77B1AE2C9DDB4200F89C9F /* CardEntity+CoreDataClass.swift in Sources */,
 				4AA7B88F2C9B9096001F49D8 /* AggregateDataUseCase.swift in Sources */,
+				4A77B1BB2CA7589200F89C9F /* InteractionOptionScreen.swift in Sources */,
 				4AA7B8622C9B1893001F49D8 /* CoreDataStack.swift in Sources */,
 				4AA7B8BD2C9CCA48001F49D8 /* MockAppIntentPreview.swift in Sources */,
 				4A77B1A82C9DDB2700F89C9F /* CardsViewerViewModel.swift in Sources */,
@@ -659,11 +683,13 @@
 				4A77B1A72C9DDB2700F89C9F /* CardsViewerScreen.swift in Sources */,
 				4A77B1A62C9DDB2700F89C9F /* SelectLanguageViewModel.swift in Sources */,
 				4AA7B8682C9B1893001F49D8 /* RemoteDataSource.swift in Sources */,
+				4A77B1B92CA753D700F89C9F /* CardsQuizScreen.swift in Sources */,
 				4AA7B7F72C9B186E001F49D8 /* Persistence.swift in Sources */,
 				4AA7B8912C9B90A5001F49D8 /* AggregateDataUseCaseImpl.swift in Sources */,
 				4AA7B8852C9B8BF9001F49D8 /* UserDefaultsRepositoryImpl.swift in Sources */,
 				4AA7B8642C9B1893001F49D8 /* LocalDataSourceImpl.swift in Sources */,
 				4AA7B8532C9B1893001F49D8 /* CardsViewModel.swift in Sources */,
+				4A77B1BF2CA75F1800F89C9F /* CardsQuizInvertViewModel.swift in Sources */,
 				4AA7B8A72C9C82BB001F49D8 /* URLSessionProtocol.swift in Sources */,
 				4A77B1AB2C9DDB2700F89C9F /* SelectCategoryScreen.swift in Sources */,
 				4AA7B8872C9B8C14001F49D8 /* UserSettings.swift in Sources */,
@@ -671,6 +697,7 @@
 				4AA7B87D2C9B8BAD001F49D8 /* UserSettingsUseCaseImpl.swift in Sources */,
 				4A77B1B22CA0B1BB00F89C9F /* Voice.swift in Sources */,
 				4AA7B89E2C9C5C4E001F49D8 /* LocalDataProcessingUseCase.swift in Sources */,
+				4A77B1B72CA753B700F89C9F /* CardsQuizViewModel.swift in Sources */,
 				4AA7B86B2C9B199B001F49D8 /* SettingsScreen.swift in Sources */,
 				4A77B1982C9DDAF900F89C9F /* RestModelsDTO.swift in Sources */,
 				4AA7B8992C9B9FC7001F49D8 /* ModelCard.swift in Sources */,
@@ -683,6 +710,7 @@
 				4AA7B85E2C9B1893001F49D8 /* LocalDataRepository.swift in Sources */,
 				4A77B1962C9DDACF00F89C9F /* GroupEntity+CoreDataClass.swift in Sources */,
 				4AA7B8652C9B1893001F49D8 /* APIClient.swift in Sources */,
+				4A77B1BD2CA75DEF00F89C9F /* CardsQuizModelInterface.swift in Sources */,
 				4AA7B8A02C9C5C8F001F49D8 /* LocalDataProcessingUseCaseImpl.swift in Sources */,
 				4AA7B8602C9B1893001F49D8 /* UseCase.swift in Sources */,
 				4AA7B8692C9B1893001F49D8 /* RemoteDataSourceImpl.swift in Sources */,

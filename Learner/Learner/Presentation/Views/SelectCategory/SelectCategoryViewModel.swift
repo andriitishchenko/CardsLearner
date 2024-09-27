@@ -37,7 +37,8 @@ class SelectCategoryViewModel: ObservableObject {
 
     
     func selectCategory(category: CategoryModel) {
-        self.appIntent.navigate(to: .detail(category))
+        self.appIntent.navigate(to: .categoryOption(category: category))
+        
     }
     
     func openSettings(){

@@ -47,20 +47,44 @@ struct MainView: View {
                     let vm = SelectLanguageViewModel(appIntent: self.appIntent)
                     SelectLanguageScreen(viewModel: vm)
                     
-                case .detail(let category):
-                    let vm = CardsViewerViewModel(appIntent: self.appIntent, category: category)
-                    CardsViewerScreen(viewModel: vm)
+                case .categoryOption(let category):
+                    // Show the options to select the interaction type
+                    InteractionOptionScreen(category: category) { selectedOption in
+                        handleSelectedOption(selectedOption, category: category)
+                    }
                     
-                default:(
+                case .detail(let category, let selectedInteraction):
+                    // Load the selected interaction view
+                    switch selectedInteraction {
+                    case .quiz:
+                        let vm = CardsQuizViewModel(appIntent: self.appIntent, category: category)
+                        CardsQuizScreen(viewModel: vm)
+                    case .viewer:
+                        let vm = CardsViewerViewModel(appIntent: self.appIntent, category: category)
+                        CardsViewerScreen(viewModel: vm)
+                    case .quizInvert:
+                        let vm = CardsQuizInvertViewModel(appIntent: self.appIntent, category: category)
+                        CardsQuizScreen(viewModel: vm)
+                    }
+                    
+                default:
                     Text("Select a category or open settings")
-                        .foregroundColor(.gray))
+                        .foregroundColor(.gray)
                 }
             }
+            
+            
+            
+            
         }
         .navigationSplitViewStyle(.balanced)
         .onReceive(appIntent.$currentScreen) { val in
             appScreen = val
         }
-        
+    }
+
+    // Handle the interaction type selected by the user
+    private func handleSelectedOption(_ selectedOption: InteractionType, category: CategoryModel) {
+        appScreen = .detail(category: category, selectedInteraction: selectedOption)
     }
 }
