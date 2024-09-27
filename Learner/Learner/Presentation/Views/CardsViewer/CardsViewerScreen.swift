@@ -86,6 +86,18 @@ struct CardsViewerScreen: View {
             }
         }
         .padding()
+        .gesture(
+                    DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                        .onEnded { value in
+                            if value.translation.width < 0 {
+                                if(!viewModel.isNextButtonDisabled){
+                                    // Left swipe detected, show next card
+                                    viewModel.showNextCard()
+                                }
+                            }
+                        }
+                        
+                )
     }
 }
 
