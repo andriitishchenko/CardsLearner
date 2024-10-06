@@ -28,12 +28,12 @@ class AggregateDataUseCaseImpl: AggregateDataUseCase {
 
             for item in originCards.list {
                 if let lngCard = learnCards.list.first( where: { $0.id  == item.id }) {
-                    let card = ModelCard(id: lngCard.id, 
-                                         categoryId: lngCard.categoryId,
+                    let card = ModelCard(id: item.id,
+                                         categoryId: item.categoryId,
                                          title: lngCard.title,
                                          translate: item.title,
                                          localCode: learnCards.lang,
-                                         picture: lngCard.picture, 
+                                         picture: item.picture,
                                          voice: lngCard.transcription,
                                          transcription: lngCard.transcription)
                                         
