@@ -50,7 +50,6 @@ struct CardsViewerScreen: View {
                         .font(.title2)
                         .padding()
                 }
-                    .scaledToFit()
                     .blur(radius: viewModel.isTranslationBlurred ? 10 : 0)
                     .onTapGesture {
                         viewModel.toggleTranslationBlur()
