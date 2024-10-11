@@ -12,7 +12,16 @@ struct CardsQuizScreen<ViewModel: CardsQuizModelInterface>: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            if let title = viewModel.displayTitle {
+            
+            if viewModel.isCompleted {
+                Text("Completed")
+                    .font(.largeTitle)
+                    .padding(.bottom, 10)
+                Text(viewModel.scoreTitle ?? "--/--")
+                    .font(.largeTitle)
+                    .padding(.bottom, 10)
+            }
+            else if let title = viewModel.displayTitle {
                 // Display the word in the origin language
                 Text(title)
                     .font(.largeTitle)
@@ -41,19 +50,19 @@ struct CardsQuizScreen<ViewModel: CardsQuizModelInterface>: View {
                     .font(.headline)
                     .padding(.bottom, 10)
                 
-                // Next button
-                Button(action: {
-                    viewModel.showNextCard()
-                }) {
-                    Text("Next")
-                        .font(.headline)
-                        .frame(minWidth: 100, minHeight: 44)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-                .disabled(viewModel.isNextButtonDisabled)
-                .padding(.top, 20)
+//                // Next button
+//                Button(action: {
+//                    viewModel.showNextCard()
+//                }) {
+//                    Text("Next")
+//                        .font(.headline)
+//                        .frame(minWidth: 100, minHeight: 44)
+//                        .background(Color.blue)
+//                        .foregroundColor(.white)
+//                        .cornerRadius(10)
+//                }
+//                .disabled(viewModel.isNextButtonDisabled)
+//                .padding(.top, 20)
             } else {
                 Text("No cards available")
             }

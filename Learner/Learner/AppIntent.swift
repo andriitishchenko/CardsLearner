@@ -11,9 +11,7 @@ class AppIntent: Intent {
     @Published var list:[CategoryModel] = []
     @Published var currentScreen: AppScreen = .home
     @Published var isLoading = false
-    
-//    var listPublisher: Published<[CategoryModel]?>.Publisher { $list }
-    
+        
     let userSettings:UserSettingsUseCase
     let localDatasource: LocalDataSource
     let remoteDatasource: RemoteDataSource
@@ -66,8 +64,6 @@ class AppIntent: Intent {
             isLoading = false
         }
     }
-    
-    
     
     func updateUserSettings(origin:String, cards:String) {
         Task {

@@ -11,6 +11,7 @@ struct SelectLanguageScreen: View {
     @ObservedObject var viewModel: SelectLanguageViewModel
     
     var body: some View {
+        VStack{
             Form {
                 Section(header: Text("Language you speak")) {
                     TextField("Enter URL for cards", text: $viewModel.baseURL)
@@ -39,9 +40,26 @@ struct SelectLanguageScreen: View {
                 
                 if !viewModel.message.isEmpty{
                     Text(viewModel.message)
-                        
+                    
                 }
             }
+            Spacer()
+            Button(action: {
+                        // Handle help button action here
+                        if let url = URL(string: "https://andriitishchenko.github.io/CardsLearnerRepo/") {
+                            UIApplication.shared.open(url)
+                        }
+                    }) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.blue)
+                                .frame(width: 60, height: 60)
+                            Text("?")
+                                .font(.system(size: 50))
+                                .foregroundColor(.white)
+                        }
+                    }
+        }
             .navigationTitle("Select Language")
             .onAppear {
                 viewModel.loadURLs()  // Load saved URLs when screen appears

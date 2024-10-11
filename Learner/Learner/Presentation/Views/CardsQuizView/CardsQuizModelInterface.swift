@@ -15,6 +15,9 @@ protocol CardsQuizModelInterface : ObservableObject{
     var selectedOption: String? { get set }
     var isNextButtonDisabled: Bool { get set }
     var isCorrect: Bool { get set }
+    var isCompleted: Bool { get set }
+    
+    var scoreTitle: String? { get set }
     
     func showCard()
     func selectOption(_ option: String)

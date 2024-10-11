@@ -8,6 +8,8 @@
 import SwiftUI
 
 class CardsQuizInvertViewModel: CardsQuizModelInterface {
+    @Published var scoreTitle: String? = ""
+    @Published var isCompleted: Bool = false
     @Published var displayTitle: String?
     @Published var currentCard: ModelCard?
     @Published var progressText: String = ""
@@ -20,6 +22,10 @@ class CardsQuizInvertViewModel: CardsQuizModelInterface {
     private var indexCards: Int = 0
     private var category: CategoryModel
     private var appIntent: AppIntent
+    
+    private var isLoading: Bool = false
+    
+    private var invalidAnswers: Int = 0
     
     init(appIntent: AppIntent, category: CategoryModel) {
         self.appIntent = appIntent
@@ -56,8 +62,21 @@ class CardsQuizInvertViewModel: CardsQuizModelInterface {
     }
     
     func selectOption(_ option: String) {
+        if isLoading {
+            return
+        }
+        isLoading = true
         selectedOption = option
         isCorrect = (option == currentCard?.title)
+        if isCorrect {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self.showNextCard()
+            }
+        }else{
+            isLoading = false
+            invalidAnswers += 1
+        }
+        
     }
     
     func showNextCard() {
@@ -67,5 +86,11 @@ class CardsQuizInvertViewModel: CardsQuizModelInterface {
             selectedOption = nil
             isCorrect = false
         }
+        else{
+            scoreTitle = "Fails: \(invalidAnswers)"
+            isCompleted = true
+        }
+        
+        isLoading = false
     }
 }
