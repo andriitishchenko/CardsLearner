@@ -7,6 +7,16 @@
 
 import SwiftUI
 import Combine
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+    return true
+  }
+}
+
 
 @main
 struct LearnerApp: App {
@@ -17,6 +27,7 @@ struct LearnerApp: App {
     @State private var isLoading: Bool = false
     private var cancellables = Set<AnyCancellable>()
     
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     init() {
         let persistenceController = PersistenceController.shared
