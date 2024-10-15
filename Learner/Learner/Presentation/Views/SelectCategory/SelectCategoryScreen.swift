@@ -9,13 +9,14 @@
 import SwiftUI
 
 struct SelectCategoryScreen: View {
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @StateObject var viewModel: SelectCategoryViewModel
     @State private var currentSelected: CategoryModel?
     @State private var isLandscape: Bool = false
-    
     // Dynamic column layout for different devices
-    func columnsForMenu() -> [GridItem] {
-        if isLandscape && UIDevice.current.userInterfaceIdiom == .phone {
+    func columnsForMenu(screenWidth: CGFloat) -> [GridItem] {
+        let thresholdForThreeColumns: CGFloat = 600
+        if isLandscape && UIDevice.current.userInterfaceIdiom == .phone && screenWidth > thresholdForThreeColumns{
             return [
                 GridItem(.flexible(), spacing: 16),
                 GridItem(.flexible(), spacing: 16),
@@ -32,13 +33,15 @@ struct SelectCategoryScreen: View {
     var body: some View {
         List(selection: $currentSelected){}.frame(height: 0) //workaround to have custom menu
         VStack {
-            LazyVGrid(columns: columnsForMenu(), spacing: 16) {
-                ForEach(viewModel.categories, id: \.id) { category in
-                    Button(action: {
-                        currentSelected = category
-                        viewModel.selectCategory(category: category)
-                    }) {
-                        CategoryGridItemView(category: category)
+            GeometryReader { geometry in
+                LazyVGrid(columns: columnsForMenu(screenWidth: geometry.size.width), spacing: 16) {
+                    ForEach(viewModel.categories, id: \.id) { category in
+                        Button(action: {
+                            currentSelected = category
+                            viewModel.selectCategory(category: category)
+                        }) {
+                            CategoryGridItemView(category: category)
+                        }
                     }
                 }
             }

@@ -24,6 +24,7 @@ class MockAppIntent: Intent {
                 id: 1,
                 title: "Category 1",
                 picture: "https://example.com/category1.png",
+                order: 0,
                 list: [
                     ModelCard(id: 1, categoryId: 1, title: "Card 1", translate: "Translation 1", localCode: "en", picture: "https://loremflickr.com/640/480/family", voice: "", transcription: "[card 1]"),
                     ModelCard(id: 2, categoryId: 1,title: "Card 2", translate: "Translation 2", localCode: "en", picture: "https://loremflickr.com/640/480/family", voice: "", transcription: "[card 2]")
@@ -33,6 +34,7 @@ class MockAppIntent: Intent {
                 id: 2,
                 title: "Category 2",
                 picture: "https://example.com/category2.png",
+                order: 0,
                 list: [
                     ModelCard(id: 3,categoryId: 2, title: "Card 3", translate: "Translation 3", localCode: "en", picture: "https://loremflickr.com/640/480/family", voice: "", transcription: "[card 3]"),
                     ModelCard(id: 4,categoryId: 2, title: "Card 4", translate: "Translation 4", localCode: "en", picture: "https://loremflickr.com/640/480/family", voice: "", transcription: "[card 4]")

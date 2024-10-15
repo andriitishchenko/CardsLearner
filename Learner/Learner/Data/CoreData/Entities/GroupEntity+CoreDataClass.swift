@@ -24,6 +24,7 @@ extension GroupEntity {
     @NSManaged public var uid: Int32
     @NSManaged public var imageURL: URL?
     @NSManaged public var cards: NSSet?
+    @NSManaged public var order: Int32
 
 }
 

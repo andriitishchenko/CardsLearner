@@ -37,6 +37,6 @@ struct CategoryListItemView: View {
 }
 
 #Preview {
-    let cat = CategoryModel(id: 1, title: "Family", picture: "https://loremflickr.com/640/480/family", list: [])
+    let cat = CategoryModel(id: 1, title: "Family", picture: "https://loremflickr.com/640/480/family",order:0, list: [])
     return CategoryListItemView(category:cat)
 }

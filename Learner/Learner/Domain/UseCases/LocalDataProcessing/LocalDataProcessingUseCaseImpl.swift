@@ -34,6 +34,7 @@ class LocalDataProcessingUseCaseImpl: LocalDataProcessingUseCase {
     func convertToGroupEntity(from categoryModel: CategoryModel) -> GroupEntity {
         let groupEntity = self.localRepository.newGroupEntity()
         groupEntity.uid = Int32(categoryModel.id)
+        groupEntity.order = Int32(categoryModel.order)
         groupEntity.title = categoryModel.title
         groupEntity.imageURL = URL(string: categoryModel.picture)
         
@@ -71,6 +72,7 @@ class LocalDataProcessingUseCaseImpl: LocalDataProcessingUseCase {
             id: Int(groupEntity.uid),
             title: groupEntity.title ?? "",
             picture: groupEntity.imageURL?.absoluteString ?? "",
+            order: Int(groupEntity.order),
             list: cards
         )
     }

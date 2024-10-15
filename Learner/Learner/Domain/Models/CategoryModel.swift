@@ -9,11 +9,11 @@ import Foundation
 
 struct CategoryModel: Codable, Equatable, Hashable {
     static func == (lhs: CategoryModel, rhs: CategoryModel) -> Bool {
-        return lhs.title == rhs.title
+        return lhs.id == rhs.id
     }
     let id: Int
     let title: String
     let picture: String
-//    var order: Int = 0
+    let order: Int
     let list: [ModelCard]
 }

@@ -44,7 +44,7 @@ class AggregateDataUseCaseImpl: AggregateDataUseCase {
             var modlCategories = [CategoryModel]()
             for ct in categories.list {
                 let list = modelCard.filter{ $0.categoryId == ct.id }
-                let modelCategory = CategoryModel(id: ct.id, title: ct.title, picture: ct.picture, list: list)
+                let modelCategory = CategoryModel(id: ct.id, title: ct.title, picture: ct.picture,order: ct.order , list: list)
                 modlCategories.append(modelCategory)
             }
             return modlCategories
