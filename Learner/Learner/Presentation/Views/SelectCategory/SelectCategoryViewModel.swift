@@ -30,7 +30,10 @@ class SelectCategoryViewModel: ObservableObject {
     private func bindToIntent() {
         appIntent.$list
             .sink { [weak self] list in
-                self?.categories = list
+                self?.categories = list.sorted(by: {
+                    return $0.title < $1.title
+                    //TODO: return $0.order < $1.order
+                })
             }
             .store(in: &cancellables)
       }

@@ -14,6 +14,7 @@
 		4A5E57B22CB9561D00094FC3 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 4A5E57B12CB9561D00094FC3 /* FirebaseAppCheck */; };
 		4A5E57B42CB9561D00094FC3 /* FirebaseAppDistribution-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = 4A5E57B32CB9561D00094FC3 /* FirebaseAppDistribution-Beta */; };
 		4A5E57B62CB9590900094FC3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4A5E57B52CB9590900094FC3 /* GoogleService-Info.plist */; };
+		4A6390212CBE6C4C00DD8274 /* View+DeviceRotationViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6390202CBE6C4C00DD8274 /* View+DeviceRotationViewModifier.swift */; };
 		4A77B1962C9DDACF00F89C9F /* GroupEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1952C9DDACF00F89C9F /* GroupEntity+CoreDataClass.swift */; };
 		4A77B1982C9DDAF900F89C9F /* RestModelsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1972C9DDAF900F89C9F /* RestModelsDTO.swift */; };
 		4A77B1A52C9DDB2700F89C9F /* SelectLanguageScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1992C9DDB2700F89C9F /* SelectLanguageScreen.swift */; };
@@ -102,6 +103,7 @@
 /* Begin PBXFileReference section */
 		4A5E57A82CB94BE900094FC3 /* URL+isReachable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+isReachable.swift"; sourceTree = "<group>"; };
 		4A5E57B52CB9590900094FC3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4A6390202CBE6C4C00DD8274 /* View+DeviceRotationViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+DeviceRotationViewModifier.swift"; sourceTree = "<group>"; };
 		4A77B1952C9DDACF00F89C9F /* GroupEntity+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GroupEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
 		4A77B1972C9DDAF900F89C9F /* RestModelsDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestModelsDTO.swift; sourceTree = "<group>"; };
 		4A77B1992C9DDB2700F89C9F /* SelectLanguageScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectLanguageScreen.swift; sourceTree = "<group>"; };
@@ -388,6 +390,7 @@
 				4A77B1B12CA0B1BB00F89C9F /* Voice.swift */,
 				4A77B1B32CA0BF6100F89C9F /* URLCacherHelper.swift */,
 				4A5E57A82CB94BE900094FC3 /* URL+isReachable.swift */,
+				4A6390202CBE6C4C00DD8274 /* View+DeviceRotationViewModifier.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -728,6 +731,7 @@
 				4A77B1B42CA0BF6100F89C9F /* URLCacherHelper.swift in Sources */,
 				4AA7B8632C9B1893001F49D8 /* LocalDataSource.swift in Sources */,
 				4AA7B85E2C9B1893001F49D8 /* LocalDataRepository.swift in Sources */,
+				4A6390212CBE6C4C00DD8274 /* View+DeviceRotationViewModifier.swift in Sources */,
 				4A77B1962C9DDACF00F89C9F /* GroupEntity+CoreDataClass.swift in Sources */,
 				4AA7B8652C9B1893001F49D8 /* APIClient.swift in Sources */,
 				4A77B1BD2CA75DEF00F89C9F /* CardsQuizModelInterface.swift in Sources */,
@@ -909,7 +913,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Learner/Learner.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"Learner/Preview Content\"";
 				DEVELOPMENT_TEAM = J4NANQ9H36;
 				ENABLE_PREVIEWS = YES;
@@ -947,7 +951,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Learner/Learner.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"Learner/Preview Content\"";
 				DEVELOPMENT_TEAM = J4NANQ9H36;
 				ENABLE_PREVIEWS = YES;
@@ -983,7 +987,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
@@ -1004,7 +1008,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
@@ -1024,7 +1028,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
@@ -1044,7 +1048,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;

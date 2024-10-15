@@ -14,5 +14,6 @@ struct CategoryModel: Codable, Equatable, Hashable {
     let id: Int
     let title: String
     let picture: String
+//    var order: Int = 0
     let list: [ModelCard]
 }
