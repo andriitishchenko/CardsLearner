@@ -9,10 +9,10 @@
 import SwiftUI
 
 struct SelectCategoryScreen: View {
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @StateObject var viewModel: SelectCategoryViewModel
     @State private var currentSelected: CategoryModel?
     @State private var isLandscape: Bool = false
+    @State private var width:CGFloat = 0.0
     // Dynamic column layout for different devices
     func columnsForMenu(screenWidth: CGFloat) -> [GridItem] {
         let thresholdForThreeColumns: CGFloat = 600
@@ -33,8 +33,7 @@ struct SelectCategoryScreen: View {
     var body: some View {
         List(selection: $currentSelected){}.frame(height: 0) //workaround to have custom menu
         VStack {
-            GeometryReader { geometry in
-                LazyVGrid(columns: columnsForMenu(screenWidth: geometry.size.width), spacing: 16) {
+            LazyVGrid(columns: columnsForMenu(screenWidth: self.width), spacing: 16) {
                     ForEach(viewModel.categories, id: \.id) { category in
                         Button(action: {
                             currentSelected = category
@@ -44,9 +43,19 @@ struct SelectCategoryScreen: View {
                         }
                     }
                 }
-            }
         }
         .padding(.horizontal, 16)
+        .background(
+            GeometryReader { proxy in
+                Color.clear
+                    .onAppear {
+                        self.width = proxy.size.width
+                    }
+                    .onChange(of: proxy.size) { _,_ in
+                        self.width = proxy.size.width
+                    }
+            }
+        )
         // Update the landscape state based on the device orientation
         .onAppear {
             updateOrientation()

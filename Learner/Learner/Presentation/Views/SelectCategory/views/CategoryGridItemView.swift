@@ -35,9 +35,11 @@ struct CategoryGridItemView: View {
                 .cornerRadius(10)
             Text(category.title)
                 .font(.headline)
+                .lineLimit(1)
+                .padding(.all, 0)
                 .padding(.top, 5)
         }
-        .padding()
+        .padding(0)
         .onAppear {
             loadImage()
         }
@@ -45,6 +47,6 @@ struct CategoryGridItemView: View {
 }
 
 #Preview {
-    let cat = CategoryModel(id: 1, title: "Family", picture: "https://loremflickr.com/640/480/family",order:0, list: [])
+    let cat = CategoryModel(id: 1, title: "Personality", picture: "https://loremflickr.com/640/480/family",order:0, list: [])
     return CategoryGridItemView(category:cat)
 }
