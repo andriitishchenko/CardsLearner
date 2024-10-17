@@ -34,6 +34,8 @@
 		4A77B1BB2CA7589200F89C9F /* InteractionOptionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1BA2CA7589200F89C9F /* InteractionOptionScreen.swift */; };
 		4A77B1BD2CA75DEF00F89C9F /* CardsQuizModelInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1BC2CA75DEF00F89C9F /* CardsQuizModelInterface.swift */; };
 		4A77B1BF2CA75F1800F89C9F /* CardsQuizInvertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1BE2CA75F1800F89C9F /* CardsQuizInvertViewModel.swift */; };
+		4A9C8EBB2CC170F400238D4F /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 4A9C8EBA2CC170F400238D4F /* GoogleMobileAds */; };
+		4A9C8EBD2CC1721B00238D4F /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A9C8EBC2CC1721B00238D4F /* Launch Screen.storyboard */; };
 		4AA7B7F52C9B186E001F49D8 /* LearnerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA7B7F42C9B186E001F49D8 /* LearnerApp.swift */; };
 		4AA7B7F72C9B186E001F49D8 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA7B7F62C9B186E001F49D8 /* Persistence.swift */; };
 		4AA7B7FA2C9B186E001F49D8 /* Learner.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4AA7B7F82C9B186E001F49D8 /* Learner.xcdatamodeld */; };
@@ -123,6 +125,8 @@
 		4A77B1BA2CA7589200F89C9F /* InteractionOptionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionOptionScreen.swift; sourceTree = "<group>"; };
 		4A77B1BC2CA75DEF00F89C9F /* CardsQuizModelInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsQuizModelInterface.swift; sourceTree = "<group>"; };
 		4A77B1BE2CA75F1800F89C9F /* CardsQuizInvertViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsQuizInvertViewModel.swift; sourceTree = "<group>"; };
+		4A9C8EB82CC170B600238D4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		4A9C8EBC2CC1721B00238D4F /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		4AA7B7F12C9B186E001F49D8 /* Learner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Learner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AA7B7F42C9B186E001F49D8 /* LearnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnerApp.swift; sourceTree = "<group>"; };
 		4AA7B7F62C9B186E001F49D8 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -181,6 +185,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A9C8EBB2CC170F400238D4F /* GoogleMobileAds in Frameworks */,
 				4A5E57B22CB9561D00094FC3 /* FirebaseAppCheck in Frameworks */,
 				4A5E57AC2CB9561D00094FC3 /* FirebaseAnalytics in Frameworks */,
 				4A5E57B42CB9561D00094FC3 /* FirebaseAppDistribution-Beta in Frameworks */,
@@ -277,6 +282,7 @@
 		4AA7B7F32C9B186E001F49D8 /* Learner */ = {
 			isa = PBXGroup;
 			children = (
+				4A9C8EB82CC170B600238D4F /* Info.plist */,
 				4AA7B8502C9B1893001F49D8 /* Data */,
 				4AA7B83E2C9B1893001F49D8 /* Domain */,
 				4AA7B8312C9B1893001F49D8 /* Presentation */,
@@ -288,6 +294,7 @@
 				4AA7B7F62C9B186E001F49D8 /* Persistence.swift */,
 				4A5E57B52CB9590900094FC3 /* GoogleService-Info.plist */,
 				4AA7B7FD2C9B1870001F49D8 /* Assets.xcassets */,
+				4A9C8EBC2CC1721B00238D4F /* Launch Screen.storyboard */,
 				4AA7B7FF2C9B1870001F49D8 /* Learner.entitlements */,
 				4AA7B7F82C9B186E001F49D8 /* Learner.xcdatamodeld */,
 				4AA7B8BC2C9CCA48001F49D8 /* MockAppIntentPreview.swift */,
@@ -647,6 +654,7 @@
 			mainGroup = 4AA7B7E82C9B186E001F49D8;
 			packageReferences = (
 				4A5E57AA2CB9561D00094FC3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				4A9C8EB92CC170F400238D4F /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			productRefGroup = 4AA7B7F22C9B186E001F49D8 /* Products */;
 			projectDirPath = "";
@@ -666,6 +674,7 @@
 			files = (
 				4AA7B8022C9B1870001F49D8 /* Preview Assets.xcassets in Resources */,
 				4AA7B7FE2C9B1870001F49D8 /* Assets.xcassets in Resources */,
+				4A9C8EBD2CC1721B00238D4F /* Launch Screen.storyboard in Resources */,
 				4A5E57B62CB9590900094FC3 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -911,6 +920,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Learner/Learner.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
@@ -918,13 +928,17 @@
 				DEVELOPMENT_TEAM = J4NANQ9H36;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Learner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Learn with Cards";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -949,6 +963,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Learner/Learner.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
@@ -956,13 +971,17 @@
 				DEVELOPMENT_TEAM = J4NANQ9H36;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Learner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Learn with Cards";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -1114,6 +1133,14 @@
 				minimumVersion = 11.3.0;
 			};
 		};
+		4A9C8EB92CC170F400238D4F /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.10.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1141,6 +1168,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4A5E57AA2CB9561D00094FC3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = "FirebaseAppDistribution-Beta";
+		};
+		4A9C8EBA2CC170F400238D4F /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4A9C8EB92CC170F400238D4F /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 /* End XCSwiftPackageProductDependency section */
 
