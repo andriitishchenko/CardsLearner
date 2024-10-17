@@ -15,7 +15,7 @@ struct SelectLanguageScreen: View {
             Form {
                 // Dropdown for "Language you speak"
                 Section(header: Text("Language you speak")) {
-                    Picker(selection: $viewModel.selectedBaseLanguage, label: Text("Select a language")) {
+                    Picker(selection: $viewModel.selectedBaseLanguage, label: Text("Select language")) {
                         ForEach(viewModel.languages, id: \.self) { language in
                             Text("\(language.flag) \(language.name)")
                             .tag(language)
@@ -34,7 +34,7 @@ struct SelectLanguageScreen: View {
 
                 // Dropdown for "Language you learn"
                 Section(header: Text("Language you learn")) {
-                    Picker(selection: $viewModel.selectedLearnLanguage, label: Text("Select a language")) {
+                    Picker(selection: $viewModel.selectedLearnLanguage, label: Text("Select language")) {
                         ForEach(viewModel.languages, id: \.self) { language in
                             Text("\(language.flag) \(language.name)")
                             .tag(language)
