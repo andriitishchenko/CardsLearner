@@ -13,14 +13,39 @@ enum RepoValidationError: Error {
     case invalidLearnURLJson
 }
 
+struct Language: Hashable {
+    let name: String
+    let flag: String
+    let url: String
+}
+
 class SelectLanguageViewModel: ObservableObject {
     @Published var baseURL: String = ""
     @Published var translateURL: String = ""
     @Published var message: String = ""
     
+    // Selected languages
+    @Published var selectedBaseLanguage: Language
+    @Published var selectedLearnLanguage: Language
+    
+    let languages: [Language] = [
+        Language(name: "English", flag: "🇬🇧", url: "https://raw.githubusercontent.com/andriitishchenko/CardsLearnerRepo/refs/heads/main"),
+        Language(name: "Dutch", flag: "🇳🇱", url: "https://raw.githubusercontent.com/andriitishchenko/CardsLearnerRepo/refs/heads/dutch"),
+        Language(name: "Українська мова", flag: "🇺🇦", url: "https://raw.githubusercontent.com/andriitishchenko/CardsLearnerRepo/refs/heads/ua"),
+        Language(name: "Polski", flag: "🇵🇱", url: "https://raw.githubusercontent.com/andriitishchenko/CardsLearnerRepo/refs/heads/pl"),
+        Language(name: "Español", flag: "🇪🇸", url: "https://raw.githubusercontent.com/andriitishchenko/CardsLearnerRepo/refs/heads/es"),
+        Language(name: "Français", flag: "🇫🇷", url: "https://raw.githubusercontent.com/andriitishchenko/CardsLearnerRepo/refs/heads/fr"),
+        Language(name: "Deutsch", flag: "🇩🇪", url: "https://raw.githubusercontent.com/andriitishchenko/CardsLearnerRepo/refs/heads/de"),
+        Language(name: "Italiano", flag: "🇮🇹", url: "https://raw.githubusercontent.com/andriitishchenko/CardsLearnerRepo/refs/heads/it"),
+        Language(name: "Русский язык", flag: "🇷🇺", url: "https://raw.githubusercontent.com/andriitishchenko/CardsLearnerRepo/refs/heads/ru"),
+        Language(name: "", flag: "⚙", url: "")
+    ]
+    
     private var appIntent: AppIntent
     
     init(appIntent: AppIntent) {
+        selectedBaseLanguage = languages[0]
+        selectedLearnLanguage = languages[1]
         self.appIntent = appIntent
         self.loadURLs()
     }
