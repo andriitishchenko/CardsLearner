@@ -15,17 +15,26 @@ import GoogleMobileAds
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        print(
+              "Google Mobile Ads SDK version: \(GADGetStringFromVersionNumber(GADMobileAds.sharedInstance().versionNumber))"
+            )
         FirebaseApp.configure()
         GADMobileAds.sharedInstance().start(completionHandler: nil)
-        requestIDFA();
-    return true
-}
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(didReceivedItemDetail), name: UIApplication.didBecomeActiveNotification, object: nil)
+        return true
+    }
+    
+    @objc func didReceivedItemDetail(){
+        self.requestIDFA()
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+    
     
     func requestIDFA() {
-      ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in
-        // Tracking authorization completed. Start loading ads here.
-        // loadAd()
-      })
+       ATTrackingManager.requestTrackingAuthorization { status in
+           
+       }
     }
 }
 

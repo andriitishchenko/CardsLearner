@@ -83,6 +83,10 @@
 		4AA7B8A72C9C82BB001F49D8 /* URLSessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA7B8A62C9C82BB001F49D8 /* URLSessionProtocol.swift */; };
 		4AA7B8BD2C9CCA48001F49D8 /* MockAppIntentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA7B8BC2C9CCA48001F49D8 /* MockAppIntentPreview.swift */; };
 		4ACBDF8B2CB4A7600072873F /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACBDF8A2CB4A7600072873F /* SnapshotHelper.swift */; };
+		4AF034D62CC2FB5B0034CDB2 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AF034D52CC2FB5B0034CDB2 /* AdSupport.framework */; };
+		4AF034D82CC2FB660034CDB2 /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AF034D72CC2FB660034CDB2 /* AppTrackingTransparency.framework */; };
+		4AF034DA2CC305130034CDB2 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF034D92CC305130034CDB2 /* BannerView.swift */; };
+		4AF034DC2CC3073A0034CDB2 /* BannerViewAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF034DB2CC3073A0034CDB2 /* BannerViewAd.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -178,6 +182,10 @@
 		4AA7B8A62C9C82BB001F49D8 /* URLSessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionProtocol.swift; sourceTree = "<group>"; };
 		4AA7B8BC2C9CCA48001F49D8 /* MockAppIntentPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAppIntentPreview.swift; sourceTree = "<group>"; };
 		4ACBDF8A2CB4A7600072873F /* SnapshotHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
+		4AF034D52CC2FB5B0034CDB2 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/AdSupport.framework; sourceTree = DEVELOPER_DIR; };
+		4AF034D72CC2FB660034CDB2 /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = DEVELOPER_DIR; };
+		4AF034D92CC305130034CDB2 /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
+		4AF034DB2CC3073A0034CDB2 /* BannerViewAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerViewAd.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,11 +194,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A9C8EBB2CC170F400238D4F /* GoogleMobileAds in Frameworks */,
+				4AF034D82CC2FB660034CDB2 /* AppTrackingTransparency.framework in Frameworks */,
 				4A5E57B22CB9561D00094FC3 /* FirebaseAppCheck in Frameworks */,
 				4A5E57AC2CB9561D00094FC3 /* FirebaseAnalytics in Frameworks */,
 				4A5E57B42CB9561D00094FC3 /* FirebaseAppDistribution-Beta in Frameworks */,
 				4A5E57B02CB9561D00094FC3 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				4A5E57AE2CB9561D00094FC3 /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
+				4AF034D62CC2FB5B0034CDB2 /* AdSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +275,7 @@
 				4AA7B7F32C9B186E001F49D8 /* Learner */,
 				4AA7B80A2C9B1870001F49D8 /* LearnerTests */,
 				4AA7B8142C9B1870001F49D8 /* LearnerUITests */,
+				4AF034D42CC2FB5B0034CDB2 /* Frameworks */,
 				4AA7B7F22C9B186E001F49D8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -365,6 +376,8 @@
 		4AA7B8302C9B1893001F49D8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4AF034D92CC305130034CDB2 /* BannerView.swift */,
+				4AF034DB2CC3073A0034CDB2 /* BannerViewAd.swift */,
 				4A77B1B52CA753AA00F89C9F /* CardsQuizView */,
 				4A77B19E2C9DDB2700F89C9F /* CardsViewer */,
 				4A77B1A42C9DDB2700F89C9F /* SelectCategory */,
@@ -564,6 +577,15 @@
 			path = LocalDataProcessing;
 			sourceTree = "<group>";
 		};
+		4AF034D42CC2FB5B0034CDB2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4AF034D72CC2FB660034CDB2 /* AppTrackingTransparency.framework */,
+				4AF034D52CC2FB5B0034CDB2 /* AdSupport.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -710,6 +732,7 @@
 				4A77B1A82C9DDB2700F89C9F /* CardsViewerViewModel.swift in Sources */,
 				4AA7B7F52C9B186E001F49D8 /* LearnerApp.swift in Sources */,
 				4AA7B8952C9B95FC001F49D8 /* CustomError.swift in Sources */,
+				4AF034DA2CC305130034CDB2 /* BannerView.swift in Sources */,
 				4AA7B85B2C9B1893001F49D8 /* AppScreen.swift in Sources */,
 				4A77B1A52C9DDB2700F89C9F /* SelectLanguageScreen.swift in Sources */,
 				4A77B1A72C9DDB2700F89C9F /* CardsViewerScreen.swift in Sources */,
@@ -752,6 +775,7 @@
 				4A77B1A92C9DDB2700F89C9F /* CategoryGridItemView.swift in Sources */,
 				4AA7B87B2C9B8B9A001F49D8 /* UserSettingsUseCase.swift in Sources */,
 				4AA7B7FA2C9B186E001F49D8 /* Learner.xcdatamodeld in Sources */,
+				4AF034DC2CC3073A0034CDB2 /* BannerViewAd.swift in Sources */,
 				4AA7B8582C9B1893001F49D8 /* MainView.swift in Sources */,
 				4AA7B88B2C9B9024001F49D8 /* RemoteDataRepository.swift in Sources */,
 				4A77B1AA2C9DDB2700F89C9F /* CategoryListItemView.swift in Sources */,

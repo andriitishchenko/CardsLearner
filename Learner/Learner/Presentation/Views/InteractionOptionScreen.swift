@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import GoogleMobileAds
 
 struct InteractionOptionScreen: View {
     let category: CategoryModel
@@ -45,6 +46,15 @@ struct InteractionOptionScreen: View {
                     .background(Color.orange)
                     .foregroundColor(.white)
                     .cornerRadius(10)
+            }
+            
+            GeometryReader { geometry in
+                let adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(geometry.size.width)
+                VStack {
+                      Spacer()
+                        BannerViewAd(adSize)
+                        .frame(height: adSize.size.height)
+                    }
             }
         }
         .padding()
