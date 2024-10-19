@@ -87,6 +87,8 @@
 		4AF034D82CC2FB660034CDB2 /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AF034D72CC2FB660034CDB2 /* AppTrackingTransparency.framework */; };
 		4AF034DA2CC305130034CDB2 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF034D92CC305130034CDB2 /* BannerView.swift */; };
 		4AF034DC2CC3073A0034CDB2 /* BannerViewAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF034DB2CC3073A0034CDB2 /* BannerViewAd.swift */; };
+		4AF034DE2CC313830034CDB2 /* CardsMixedLettersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF034DD2CC313830034CDB2 /* CardsMixedLettersViewModel.swift */; };
+		4AF034E02CC313A50034CDB2 /* CardsMixedLettersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF034DF2CC313A50034CDB2 /* CardsMixedLettersView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -186,6 +188,8 @@
 		4AF034D72CC2FB660034CDB2 /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = DEVELOPER_DIR; };
 		4AF034D92CC305130034CDB2 /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		4AF034DB2CC3073A0034CDB2 /* BannerViewAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerViewAd.swift; sourceTree = "<group>"; };
+		4AF034DD2CC313830034CDB2 /* CardsMixedLettersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsMixedLettersViewModel.swift; sourceTree = "<group>"; };
+		4AF034DF2CC313A50034CDB2 /* CardsMixedLettersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsMixedLettersView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -378,6 +382,7 @@
 			children = (
 				4AF034D92CC305130034CDB2 /* BannerView.swift */,
 				4AF034DB2CC3073A0034CDB2 /* BannerViewAd.swift */,
+				4AF034E12CC331680034CDB2 /* CardsMixedLetters */,
 				4A77B1B52CA753AA00F89C9F /* CardsQuizView */,
 				4A77B19E2C9DDB2700F89C9F /* CardsViewer */,
 				4A77B1A42C9DDB2700F89C9F /* SelectCategory */,
@@ -586,6 +591,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		4AF034E12CC331680034CDB2 /* CardsMixedLetters */ = {
+			isa = PBXGroup;
+			children = (
+				4AF034DD2CC313830034CDB2 /* CardsMixedLettersViewModel.swift */,
+				4AF034DF2CC313A50034CDB2 /* CardsMixedLettersView.swift */,
+			);
+			path = CardsMixedLetters;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -750,6 +764,7 @@
 				4AA7B8872C9B8C14001F49D8 /* UserSettings.swift in Sources */,
 				4A77B1B02C9E387D00F89C9F /* ErrorPopupView.swift in Sources */,
 				4AA7B87D2C9B8BAD001F49D8 /* UserSettingsUseCaseImpl.swift in Sources */,
+				4AF034DE2CC313830034CDB2 /* CardsMixedLettersViewModel.swift in Sources */,
 				4A77B1B22CA0B1BB00F89C9F /* Voice.swift in Sources */,
 				4AA7B89E2C9C5C4E001F49D8 /* LocalDataProcessingUseCase.swift in Sources */,
 				4A77B1B72CA753B700F89C9F /* CardsQuizViewModel.swift in Sources */,
@@ -759,6 +774,7 @@
 				4AA7B86D2C9B19A5001F49D8 /* RegistrationScreen.swift in Sources */,
 				4AA7B8522C9B1893001F49D8 /* ErrorHandling.swift in Sources */,
 				4AA7B8592C9B1893001F49D8 /* AppIntent.swift in Sources */,
+				4AF034E02CC313A50034CDB2 /* CardsMixedLettersView.swift in Sources */,
 				4A77B1AC2C9DDB2700F89C9F /* SelectCategoryViewModel.swift in Sources */,
 				4A77B1B42CA0BF6100F89C9F /* URLCacherHelper.swift in Sources */,
 				4AA7B8632C9B1893001F49D8 /* LocalDataSource.swift in Sources */,

@@ -48,6 +48,19 @@ struct InteractionOptionScreen: View {
                     .cornerRadius(10)
             }
             
+            Button(action: {
+                onOptionSelected(.mixedLetters)
+            }) {
+                Label("Mixed letters", systemImage: "arrow.left.arrow.right")
+                    .frame(minWidth: 200, minHeight: 44)
+                    .background(Color(
+                        red: 1,
+                        green: 0.55,
+                        blue: 0.41
+                    ))
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
             GeometryReader { geometry in
                 let adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(geometry.size.width)
                 VStack {

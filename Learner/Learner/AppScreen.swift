@@ -4,6 +4,7 @@ enum InteractionType {
     case viewer
     case quiz
     case quizInvert
+    case mixedLetters
 }
 
 enum AppScreen: Hashable, Equatable {

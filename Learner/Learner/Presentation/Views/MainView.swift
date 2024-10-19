@@ -65,6 +65,9 @@ struct MainView: View {
                     case .quizInvert:
                         let vm = CardsQuizInvertViewModel(appIntent: self.appIntent, category: category)
                         CardsQuizScreen(viewModel: vm)
+                    case .mixedLetters:
+                        let vm = CardsMixedLettersViewModel(appIntent: self.appIntent, category: category)
+                        CardsMixedLettersView(viewModel: vm)
                     }
                     
                 default:
