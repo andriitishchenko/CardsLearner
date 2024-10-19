@@ -15,8 +15,11 @@ struct CardsMixedLettersView: View {
             if viewModel.isCompleted {
                 CompletedView(failedWordsCount: viewModel.failedWordsCount)
             } else {
-                Text(viewModel.currentCard?.translate ?? "") // Display the original phrase at the top
+                Text("\(viewModel.currentCard!.translate)\(Image(systemName: "speaker.wave.3"))")
                     .font(.headline)
+                    .onTapGesture {
+                        viewModel.say()
+                    }
                 Text("\(viewModel.currentWordIndex + 1) of \(viewModel.totalWords)")
                     .padding(.bottom)
 
@@ -33,7 +36,7 @@ struct CardsMixedLettersView: View {
                                     .border(Color.black)
                                 Text(viewModel.selectedLetters[index][letterIndex] ?? "_")
                                     .font(.largeTitle)
-                                    .foregroundColor(viewModel.isCorrect ? .green : .primary)
+                                    .foregroundColor(viewModel.statusColor())
                             }
                         }
                     }

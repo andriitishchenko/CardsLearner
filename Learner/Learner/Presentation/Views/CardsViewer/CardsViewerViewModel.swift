@@ -20,7 +20,7 @@ class CardsViewerViewModel: ObservableObject {
     private var indexCards: Int = 0
     private var appIntent: AppIntent
     
-    private var shouldSaySlovly = false
+    private var shouldSaySlowly = false
     
     private var voice:Voice
     
@@ -36,8 +36,8 @@ class CardsViewerViewModel: ObservableObject {
             self.currentCard = self.category?.list[indexCards]
             progressText = "\(indexCards + 1) of \(totalCards)"
             isNextButtonDisabled = indexCards >= totalCards-1
-            shouldSaySlovly = false
-            var resultUrl = await downloadFileDataTask(urlString: currentCard?.picture ?? "")!
+            shouldSaySlowly = false
+            let resultUrl = await downloadFileDataTask(urlString: currentCard?.picture ?? "")!
             self.imageURL = resultUrl
         }
     }
@@ -59,20 +59,18 @@ class CardsViewerViewModel: ObservableObject {
     func toggleBaseTitleBlur() {
         isBaseTitleBlurred.toggle()
     }
-        
+
     func say(){
         Task{
             if let str = currentCard?.title {
-                if !shouldSaySlovly{
+                if !shouldSaySlowly{
                     voice.strToVoice(text: str)
                 }
                 else {
                     voice.sayAgain()
                 }
-                
-                shouldSaySlovly = !shouldSaySlovly
+                shouldSaySlowly = !shouldSaySlowly
             }
         }
-        
     }
 }
