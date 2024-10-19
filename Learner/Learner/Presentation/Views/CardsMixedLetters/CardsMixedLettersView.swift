@@ -80,7 +80,6 @@ struct CardsMixedLettersView: View {
                             .font(.title)
                             .padding()
                             .background(Color.orange)
-                            
                             .foregroundColor(.white)
                             .cornerRadius(5)
                     }

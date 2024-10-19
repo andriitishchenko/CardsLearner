@@ -83,6 +83,15 @@ class SelectLanguageViewModel: ObservableObject {
             let upr: UserSettings = await appIntent.getUserSettings()!
                 baseURL = upr.originURL
                 translateURL = upr.learnURL
+            
+            selectedBaseLanguage = languages.first(where: {
+                return $0.url == baseURL
+            }) ?? languages.last!
+            
+            selectedLearnLanguage = languages.first(where: {
+                return $0.url == translateURL
+            }) ?? languages.last!
+            
         }
     }
 
