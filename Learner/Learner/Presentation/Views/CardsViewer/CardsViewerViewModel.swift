@@ -37,8 +37,11 @@ class CardsViewerViewModel: ObservableObject {
             progressText = "\(indexCards + 1) of \(totalCards)"
             isNextButtonDisabled = indexCards >= totalCards-1
             shouldSaySlowly = false
-            let resultUrl = await downloadFileDataTask(urlString: currentCard?.picture ?? "")!
-            self.imageURL = resultUrl
+            
+            if let url = currentCard?.picture {
+                let resultUrl = await downloadFileDataTask(urlString: url)
+                self.imageURL = resultUrl
+            }
         }
     }
     

@@ -25,18 +25,19 @@ struct CardsViewerScreen: View {
                     .padding(.bottom)
                 
                 // Card image
-                
-                    AsyncImage(url: viewModel.imageURL) { image in
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } placeholder: {
-                            ProgressView()
-                            
+                AsyncImage(url: viewModel.imageURL) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable().scaledToFit()
+                    default:
+                        VStack {
+                            Image(systemName: "photo.badge.exclamationmark")
+                            .font(.largeTitle)
+                            Text("No image")
+                        }
                     }
-                    .frame(maxWidth: .infinity, maxHeight: 300)
-                    .cornerRadius(15)
-                
+                }.frame(maxWidth: .infinity, maxHeight: 300)
+                 .cornerRadius(15)
                 
                 VStack(spacing: 0)
                     {
