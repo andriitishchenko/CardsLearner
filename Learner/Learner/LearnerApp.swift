@@ -21,26 +21,33 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         GADMobileAds.sharedInstance().start(completionHandler: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(didReceivedItemDetail), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didReceivedItemDetail),
+                                               name: UIApplication.didBecomeActiveNotification, object: nil)
         return true
     }
+            
     
     @objc func didReceivedItemDetail(){
         self.requestIDFA()
         NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
     }
-    
-    
+        
+
     func requestIDFA() {
        ATTrackingManager.requestTrackingAuthorization { status in
            
        }
+    }
+    
+    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        return true
     }
 }
 
 
 @main
 struct LearnerApp: App {
+    @Environment(\.scenePhase) var scenePhase
     private let appIntent: AppIntent
     @State private var scale: CGFloat = 0.5
     
@@ -98,8 +105,28 @@ struct LearnerApp: App {
             .onReceive(appIntent.$isLoading) { val in
                 isLoading = val
             }
+            .onOpenURL { url in
+                self.appIntent.handleImport(file: url)
+            }
+            .onChange(of: scenePhase) { oldPhase, newPhase  in
+                if newPhase == .active {
+                    checkForImport()
+                }
+            }
+            
         }
-        
     }
-    
+}
+
+extension LearnerApp{
+    func checkForImport(){
+        let sharedDefaults = UserDefaults(suiteName: "group.at.flashcards")
+        if let urlPath = sharedDefaults?.object(forKey: "IMPORT_PATH"){
+            print("NEW IMPORT FROM \(urlPath)")
+            sharedDefaults?.removeObject(forKey: "IMPORT_PATH")
+            if let url = URL(string: urlPath as! String){
+                self.appIntent.handleImport(file: url)
+            }
+        }
+    }
 }

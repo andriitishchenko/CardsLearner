@@ -8,6 +8,7 @@ struct MainView: View {
     @State var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
     
     @State var appScreen: AppScreen = .home
+    @State private var isImporting: Bool = false
     
     init(appIntent: AppIntent) {
         self.appIntent = appIntent
@@ -22,14 +23,36 @@ struct MainView: View {
                 SelectCategoryScreen(viewModel: vm)
             }
             Spacer()
-
-            Button() {
-                onButtonClick = 1
-            }
-            label: {
-                Label("Settings", systemImage: "gear")
-            }
             
+            HStack(alignment: .center) {
+                Button() {
+                    onButtonClick = 1
+                }
+                label: {
+                    Label("Settings", systemImage: "gear")
+                }
+                Text("|")
+                Button(action: {
+                  isImporting = true
+                }, label: {
+                    Label("Import", systemImage: "square.and.arrow.down")
+                })
+                .fileImporter(isPresented: $isImporting,
+                              allowedContentTypes: [.plainText, .utf8PlainText, .delimitedText, .commaSeparatedText, .tabSeparatedText],
+                  onCompletion: { result in
+                                
+                  switch result {
+                  case .success(let file):
+                    let gotAccess = file.startAccessingSecurityScopedResource()
+                    if !gotAccess { return }
+                    self.appIntent.handleImport(file: file)
+                    file.stopAccessingSecurityScopedResource()
+                  case .failure(let error):
+                    print(error)
+                  }
+                })
+            }
+                        
             List(selection: $onButtonClick){}.frame(height: 0)
             .onChange(of: onButtonClick,initial: false) { (newValue, i) in
                     appIntent.navigate(to: .settings)

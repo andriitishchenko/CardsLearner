@@ -155,5 +155,37 @@ class AppIntent: Intent {
     func clearNavigation() {
         navigationPath.removeLast(navigationPath.count)
     }
+        
+    func handleImport(file: URL){
+        
+        if let test1 = getQueryStringParameter(url: file.absoluteString, param: "importFile"){
+            if let u = URL(string: test1){
+                handleImport(file: u)
+            }
+            return
+        }
+        
+        isLoading = true
+        if let pairs = parseFileToWordPairs(file: file){
+            self.list.removeAll(where: { $0.id == 1000 } )
+            var list: [ModelCard] = []
+            var int = 0
+            for pair in pairs {
+                int += 1
+                let card = ModelCard(id: 1000 + int,
+                                     categoryId: 1000,
+                                     title: pair.0,
+                                     translate: pair.1,
+                                     localCode:"en",
+                                     picture: nil,
+                                     voice: nil,
+                                     transcription:pair.1)
+                list.append(card)
+            }
+            let cm = CategoryModel(id: 1000, title: "Notes", picture: "", order: 0, list: list)
+            self.list.append(cm)
+        }
+        isLoading = false
+    }
 }
 
