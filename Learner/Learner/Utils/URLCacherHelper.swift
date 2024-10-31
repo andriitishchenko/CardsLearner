@@ -12,6 +12,10 @@ func downloadFileDataTask(urlString: String) async -> URL? {
         print("Invalid URL")
         return nil
     }
+    
+    if url.isFileURL {
+        return url
+    }
 
     // Determine the destination URL in the caches directory
     let documentsUrl: URL

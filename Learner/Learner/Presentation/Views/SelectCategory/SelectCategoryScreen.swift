@@ -51,7 +51,7 @@ struct SelectCategoryScreen: View {
                     .onAppear {
                         self.width = proxy.size.width
                     }
-                    .onChange(of: proxy.size) { _,_ in
+                    .onChange(of: proxy.size) { newSize in
                         self.width = proxy.size.width
                     }
             }

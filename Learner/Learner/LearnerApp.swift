@@ -108,7 +108,7 @@ struct LearnerApp: App {
             .onOpenURL { url in
                 self.appIntent.handleImport(file: url)
             }
-            .onChange(of: scenePhase) { oldPhase, newPhase  in
+            .onChange(of: scenePhase) { newPhase  in
                 if newPhase == .active {
                     checkForImport()
                 }

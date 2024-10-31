@@ -10,6 +10,7 @@
 		4A080CE82CCC048A000FD689 /* fileParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A080CE72CCC048A000FD689 /* fileParser.swift */; };
 		4A080D032CCC394D000FD689 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A080D022CCC394D000FD689 /* UniformTypeIdentifiers.framework */; };
 		4A080D0F2CCC394D000FD689 /* LearnerImport.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4A080D012CCC394D000FD689 /* LearnerImport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4A40A7772CD3E557009BD5FD /* notes.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A40A7762CD3E557009BD5FD /* notes.png */; };
 		4A5E57A92CB94BE900094FC3 /* URL+isReachable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A5E57A82CB94BE900094FC3 /* URL+isReachable.swift */; };
 		4A5E57AC2CB9561D00094FC3 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 4A5E57AB2CB9561D00094FC3 /* FirebaseAnalytics */; };
 		4A5E57AE2CB9561D00094FC3 /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = 4A5E57AD2CB9561D00094FC3 /* FirebaseAnalyticsOnDeviceConversion */; };
@@ -136,6 +137,7 @@
 		4A080CE72CCC048A000FD689 /* fileParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fileParser.swift; sourceTree = "<group>"; };
 		4A080D012CCC394D000FD689 /* LearnerImport.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LearnerImport.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A080D022CCC394D000FD689 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
+		4A40A7762CD3E557009BD5FD /* notes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notes.png; sourceTree = "<group>"; };
 		4A5E57A82CB94BE900094FC3 /* URL+isReachable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+isReachable.swift"; sourceTree = "<group>"; };
 		4A5E57B52CB9590900094FC3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4A6390202CBE6C4C00DD8274 /* View+DeviceRotationViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+DeviceRotationViewModifier.swift"; sourceTree = "<group>"; };
@@ -326,7 +328,6 @@
 			isa = PBXGroup;
 			children = (
 				4AA7B7F32C9B186E001F49D8 /* Learner */,
-				4AA7B80A2C9B1870001F49D8 /* LearnerTests */,
 				4AA7B8142C9B1870001F49D8 /* LearnerUITests */,
 				4A080D042CCC394D000FD689 /* LearnerImport */,
 				4AF034D42CC2FB5B0034CDB2 /* Frameworks */,
@@ -399,6 +400,7 @@
 		4AA7B8242C9B1893001F49D8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				4A40A7762CD3E557009BD5FD /* notes.png */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -463,6 +465,7 @@
 		4AA7B8352C9B1893001F49D8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				4AA7B80A2C9B1870001F49D8 /* LearnerTests */,
 				4A77B1B12CA0B1BB00F89C9F /* Voice.swift */,
 				4A77B1B32CA0BF6100F89C9F /* URLCacherHelper.swift */,
 				4A080CE72CCC048A000FD689 /* fileParser.swift */,
@@ -798,6 +801,7 @@
 			files = (
 				4AA7B8022C9B1870001F49D8 /* Preview Assets.xcassets in Resources */,
 				4AA7B7FE2C9B1870001F49D8 /* Assets.xcassets in Resources */,
+				4A40A7772CD3E557009BD5FD /* notes.png in Resources */,
 				4A9C8EBD2CC1721B00238D4F /* Launch Screen.storyboard in Resources */,
 				4A5E57B62CB9590900094FC3 /* GoogleService-Info.plist in Resources */,
 			);
@@ -1141,11 +1145,11 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = at.flashcards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -1184,11 +1188,11 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = at.flashcards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;

@@ -158,6 +158,11 @@ class AppIntent: Intent {
         
     func handleImport(file: URL){
         
+        var strLang = "en"
+        if list.count > 0{
+            strLang = (list.first?.list.first!.localCode)!
+        }
+        
         if let test1 = getQueryStringParameter(url: file.absoluteString, param: "importFile"){
             if let u = URL(string: test1){
                 handleImport(file: u)
@@ -176,13 +181,20 @@ class AppIntent: Intent {
                                      categoryId: 1000,
                                      title: pair.0,
                                      translate: pair.1,
-                                     localCode:"en",
+                                     localCode:strLang,
                                      picture: nil,
+// TODO:                                        "https://loremflickr.com/640/480/\(pair.0)",
                                      voice: nil,
                                      transcription:pair.1)
                 list.append(card)
             }
-            let cm = CategoryModel(id: 1000, title: "Notes", picture: "", order: 0, list: list)
+            
+            var picURL:String = ""
+            if let imageURL = Bundle.main.url(forResource: "notes", withExtension: "png") {
+                picURL = imageURL.absoluteString
+            }
+            
+            let cm = CategoryModel(id: 1000, title: "Imported", picture: picURL, order: 0, list: list)
             self.list.append(cm)
         }
         isLoading = false

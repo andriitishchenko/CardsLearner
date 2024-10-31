@@ -54,7 +54,7 @@ struct MainView: View {
             }
                         
             List(selection: $onButtonClick){}.frame(height: 0)
-            .onChange(of: onButtonClick,initial: false) { (newValue, i) in
+            .onChange(of: onButtonClick) { newValue in
                     appIntent.navigate(to: .settings)
             }
             .navigationTitle("Categories")
