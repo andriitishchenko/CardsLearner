@@ -366,6 +366,7 @@
 				4AA7B7F82C9B186E001F49D8 /* Learner.xcdatamodeld */,
 				4AA7B8BC2C9CCA48001F49D8 /* MockAppIntentPreview.swift */,
 				4AA7B8002C9B1870001F49D8 /* Preview Content */,
+				4AA7B80A2C9B1870001F49D8 /* LearnerTests */,
 			);
 			path = Learner;
 			sourceTree = "<group>";
@@ -465,7 +466,6 @@
 		4AA7B8352C9B1893001F49D8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				4AA7B80A2C9B1870001F49D8 /* LearnerTests */,
 				4A77B1B12CA0B1BB00F89C9F /* Voice.swift */,
 				4A77B1B32CA0BF6100F89C9F /* URLCacherHelper.swift */,
 				4A080CE72CCC048A000FD689 /* fileParser.swift */,
