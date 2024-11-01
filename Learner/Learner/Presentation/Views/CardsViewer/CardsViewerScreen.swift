@@ -10,6 +10,15 @@ import SwiftUI
 struct CardsViewerScreen: View {
     @ObservedObject var viewModel: CardsViewerViewModel
     
+    var imageName: String {
+        if #available(iOS 18.0, *) {
+            return "photo.badge.exclamationmark.fill.circle"
+        } else {
+            return "photo"
+        }
+    }
+
+    
     var body: some View {
         VStack(spacing: 0) {
             if let card = viewModel.currentCard {
@@ -31,7 +40,7 @@ struct CardsViewerScreen: View {
                         image.resizable().scaledToFit()
                     default:
                         VStack {
-                            Image(systemName: "photo.badge.exclamationmark")
+                            Image(systemName:imageName)
                             .font(.largeTitle)
                             Text("No image")
                         }
@@ -78,11 +87,10 @@ struct CardsViewerScreen: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
-                .disabled(viewModel.isNextButtonDisabled)
                 .padding()
                 
             } else {
-                Text("No cards available")
+                Text("There are no more cards available")
             }
         }
         .padding()
@@ -90,13 +98,9 @@ struct CardsViewerScreen: View {
                     DragGesture(minimumDistance: 30, coordinateSpace: .local)
                         .onEnded { value in
                             if value.translation.width < 0 {
-                                if(!viewModel.isNextButtonDisabled){
-                                    // Left swipe detected, show next card
                                     viewModel.showNextCard()
-                                }
                             }
                         }
-                        
                 )
     }
 }

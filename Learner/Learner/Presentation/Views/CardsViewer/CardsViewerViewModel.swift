@@ -12,7 +12,6 @@ class CardsViewerViewModel: ObservableObject {
     @Published var progressText: String = ""
     @Published var isTranslationBlurred: Bool = false
     @Published var isBaseTitleBlurred: Bool = false
-    @Published var isNextButtonDisabled: Bool = false
     @Published var category: CategoryModel?
     @Published var imageURL: URL?
     
@@ -37,7 +36,6 @@ class CardsViewerViewModel: ObservableObject {
         Task{ @MainActor in
             self.currentCard = list[indexCards]
             progressText = "\(indexCards + 1) of \(totalCards)"
-            isNextButtonDisabled = indexCards >= totalCards-1
             shouldSaySlowly = false
             
             if let url = currentCard?.picture {
@@ -53,6 +51,9 @@ class CardsViewerViewModel: ObservableObject {
         indexCards += 1
         if indexCards <= totalCards-1 {
             showCard()
+        }
+        else{
+            currentCard = nil
         }
     }
         
