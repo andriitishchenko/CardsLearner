@@ -176,6 +176,9 @@ class AppIntent: Intent {
             var list: [ModelCard] = []
             var int = 0
             for pair in pairs {
+                
+                let latinString = pair.0.lowercased().applyingTransform(StringTransform.toLatin, reverse: false) // contains š,.. etc
+                let noDiacriticString = latinString?.applyingTransform(StringTransform.stripDiacritics, reverse: false) ?? "" // convert š => s
                 int += 1
                 let card = ModelCard(id: 1000 + int,
                                      categoryId: 1000,
@@ -185,7 +188,7 @@ class AppIntent: Intent {
                                      picture: nil,
 // TODO:                                        "https://loremflickr.com/640/480/\(pair.0)",
                                      voice: nil,
-                                     transcription:pair.1)
+                                     transcription:"[\(noDiacriticString)]")
                 list.append(card)
             }
             

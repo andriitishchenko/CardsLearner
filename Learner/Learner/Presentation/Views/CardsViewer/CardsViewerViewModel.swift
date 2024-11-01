@@ -19,6 +19,7 @@ class CardsViewerViewModel: ObservableObject {
     private var totalCards: Int = 0
     private var indexCards: Int = 0
     private var appIntent: AppIntent
+    private var list: [ModelCard]
     
     private var shouldSaySlowly = false
     
@@ -29,11 +30,12 @@ class CardsViewerViewModel: ObservableObject {
         self.category = category
         self.totalCards = category.list.count
         voice = Voice(lang: category.list[0].localCode)
+        list = category.list.shuffled()
         showCard()
     }
     func showCard(){
         Task{ @MainActor in
-            self.currentCard = self.category?.list[indexCards]
+            self.currentCard = list[indexCards]
             progressText = "\(indexCards + 1) of \(totalCards)"
             isNextButtonDisabled = indexCards >= totalCards-1
             shouldSaySlowly = false

@@ -22,8 +22,8 @@ class CardsQuizInvertViewModel: CardsQuizModelInterface {
     private var indexCards: Int = 0
     private var category: CategoryModel
     private var appIntent: AppIntent
-    
     private var isLoading: Bool = false
+    private var list: [ModelCard]
     
     private var invalidAnswers: Int = 0
     
@@ -31,12 +31,13 @@ class CardsQuizInvertViewModel: CardsQuizModelInterface {
         self.appIntent = appIntent
         self.category = category
         self.totalCards = category.list.count
+        list = category.list.shuffled()
         showCard()
     }
     
     func showCard() {
         Task { @MainActor in
-            currentCard = category.list[indexCards]
+            currentCard = list[indexCards]
             displayTitle = currentCard?.translate
             progressText = "\(indexCards + 1) of \(totalCards)"
             isNextButtonDisabled = indexCards >= totalCards - 1
@@ -47,7 +48,7 @@ class CardsQuizInvertViewModel: CardsQuizModelInterface {
     private func generateOptions() {
         guard let currentCard = currentCard else { return }
         
-        var allCards = category.list.filter { $0.id != currentCard.id }
+        var allCards = list.filter { $0.id != currentCard.id }
         allCards.shuffle()
         
         // Pick 2 random titles from other cards

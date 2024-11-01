@@ -31,10 +31,12 @@ class CardsMixedLettersViewModel: ObservableObject {
     private var originalPhrase: String = ""
     private var voice:Voice
     private var shouldSaySlowly = false
+    private var list: [ModelCard]
 
     init(appIntent: AppIntent, category: CategoryModel) {
         self.appIntent = appIntent
         self.category = category
+        list = category.list.shuffled()
         self.totalWords = category.list.count
         self.voice = Voice(lang: category.list[0].localCode)
         loadNextWord()
@@ -46,7 +48,7 @@ class CardsMixedLettersViewModel: ObservableObject {
             return
         }
         
-        currentCard = category.list[currentWordIndex]
+        currentCard = list[currentWordIndex]
         originalPhrase = currentCard?.title.lowercased() ?? ""
         
         // Initialize selected letters and options
