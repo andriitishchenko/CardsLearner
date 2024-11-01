@@ -76,7 +76,7 @@ struct CardsMixedLettersView: View {
                     Button(action: {
                         viewModel.removeLastLetter()
                     }) {
-                        Text("Delete Last")
+                        Text("Delete")
                             .font(.title)
                             .padding()
                             .background(Color.orange)
