@@ -8,7 +8,8 @@
 import Foundation
 import AVFoundation
 
-class Voice {
+@MainActor
+final class Voice {
     let synthesizer = AVSpeechSynthesizer()
     var utterance : AVSpeechUtterance?
     var lang: String = "en"
@@ -20,9 +21,10 @@ class Voice {
     }
     
     func strToVoice(text:String){
-        utterance = AVSpeechUtterance(string: text)
-        utterance!.voice = AVSpeechSynthesisVoice(language: lang)
-        synthesizer.speak(utterance!)
+        let newUtterance = AVSpeechUtterance(string: text)
+        newUtterance.voice = AVSpeechSynthesisVoice(language: lang)
+        utterance = newUtterance
+        synthesizer.speak(newUtterance)
     }
     
     func sayAgain(){
@@ -36,4 +38,3 @@ class Voice {
         }
     }
 }
-

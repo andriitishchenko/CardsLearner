@@ -61,17 +61,6 @@
                ReferencedContainer = "container:Learner.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4A5E579C2CB8840200094FC3"
-               BuildableName = "LearnerUITests1.xctest"
-               BlueprintName = "LearnerUITests1"
-               ReferencedContainer = "container:Learner.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

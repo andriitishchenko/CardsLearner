@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserSettings : Hashable{
+struct UserSettings: Hashable, Sendable {
     let originURL: String
     let learnURL: String
 }

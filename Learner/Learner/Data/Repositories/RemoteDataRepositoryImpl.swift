@@ -7,7 +7,7 @@
 
 import Foundation
 
-class RemoteDataRepositoryImpl: RemoteDataRepository{
+final class RemoteDataRepositoryImpl: RemoteDataRepository {
     private let remoteDataSource: any RemoteDataSource
     
     init(remoteDataSource: any RemoteDataSource) {

@@ -12,7 +12,8 @@ fileprivate let default_originURL:String = "https://raw.githubusercontent.com/an
 fileprivate let default_learnURL:String = "https://raw.githubusercontent.com/andriitishchenko/CardsLearnerRepo/refs/heads/dutch"
 
 import Foundation
-class UserDefaultsRepositoryImpl: UserDefaultsRepository {
+@MainActor
+final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
     private let userDefaults = UserDefaults.standard
     
     func saveUserSettings(_ settings: UserSettings) async throws {

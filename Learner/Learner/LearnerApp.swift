@@ -16,10 +16,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         print(
-              "Google Mobile Ads SDK version: \(GADGetStringFromVersionNumber(GADMobileAds.sharedInstance().versionNumber))"
+              "Google Mobile Ads SDK version: \(string(for: MobileAds.shared.versionNumber))"
             )
         FirebaseApp.configure()
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        MobileAds.shared.start(completionHandler: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(didReceivedItemDetail),
                                                name: UIApplication.didBecomeActiveNotification, object: nil)
@@ -121,12 +121,10 @@ struct LearnerApp: App {
 extension LearnerApp{
     func checkForImport(){
         let sharedDefaults = UserDefaults(suiteName: "group.at.flashcards")
-        if let urlPath = sharedDefaults?.object(forKey: "IMPORT_PATH"){
-            print("NEW IMPORT FROM \(urlPath)")
+        if let urlPath = sharedDefaults?.string(forKey: "IMPORT_PATH"),
+           let url = URL(string: urlPath) {
             sharedDefaults?.removeObject(forKey: "IMPORT_PATH")
-            if let url = URL(string: urlPath as! String){
-                self.appIntent.handleImport(file: url)
-            }
+            self.appIntent.handleImport(file: url)
         }
     }
 }

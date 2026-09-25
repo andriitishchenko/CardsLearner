@@ -10,7 +10,7 @@ import GoogleMobileAds
 
 struct BannerView: UIViewControllerRepresentable {
     
-    let bannerView = GADBannerView(adSize: GADAdSizeBanner)
+    let bannerView = GoogleMobileAds.BannerView(adSize: AdSizeBanner)
     
     func makeUIViewController(context: Context) -> UIViewController {
         
@@ -24,12 +24,12 @@ struct BannerView: UIViewControllerRepresentable {
     
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
         
-        bannerView.load(GADRequest())
+        bannerView.load(Request())
     }
 }
 
 #Preview {
     BannerView()
-                .frame(width: GADAdSizeBanner.size.width,
-                       height: GADAdSizeBanner.size.height)
+                .frame(width: AdSizeBanner.size.width,
+                       height: AdSizeBanner.size.height)
 }

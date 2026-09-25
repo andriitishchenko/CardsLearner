@@ -62,7 +62,7 @@ struct InteractionOptionScreen: View {
                     .cornerRadius(10)
             }
             GeometryReader { geometry in
-                let adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(geometry.size.width)
+                let adSize = largeAnchoredAdaptiveBanner(width: geometry.size.width)
                 VStack {
                       Spacer()
                         BannerViewAd(adSize)

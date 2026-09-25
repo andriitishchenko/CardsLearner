@@ -1,6 +1,6 @@
 import Foundation
 
-class RemoteDataSourceImpl: RemoteDataSource {
+final class RemoteDataSourceImpl: RemoteDataSource {
     func fetchCards(url: String) async throws -> CardResponse {
         let restClient = APIClientImpl()
         return try await restClient.performRequest(endpoint: "\(url)/cards.json")

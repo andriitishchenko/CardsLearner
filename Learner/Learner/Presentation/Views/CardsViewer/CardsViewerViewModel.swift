@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-class CardsViewerViewModel: ObservableObject {
+@MainActor
+final class CardsViewerViewModel: ObservableObject {
     @Published var currentCard: ModelCard?
     @Published var progressText: String = ""
     @Published var isTranslationBlurred: Bool = false
@@ -28,31 +29,42 @@ class CardsViewerViewModel: ObservableObject {
         self.appIntent = appIntent
         self.category = category
         self.totalCards = category.list.count
-        voice = Voice(lang: category.list[0].localCode)
+        voice = Voice(lang: category.list.first?.localCode ?? "en")
         list = category.list.shuffled()
         showCard()
     }
     func showCard(){
-        Task{ @MainActor in
-            self.currentCard = list[indexCards]
-            progressText = "\(indexCards + 1) of \(totalCards)"
-            shouldSaySlowly = false
-            
-            if let url = currentCard?.picture {
-                let resultUrl = await downloadFileDataTask(urlString: url)
-                self.imageURL = resultUrl
-            }
+        guard list.indices.contains(indexCards) else {
+            currentCard = nil
+            progressText = "0 of \(totalCards)"
+            return
+        }
+
+        let card = list[indexCards]
+        currentCard = card
+        imageURL = nil
+        isTranslationBlurred = false
+        isBaseTitleBlurred = false
+        progressText = "\(indexCards + 1) of \(totalCards)"
+        shouldSaySlowly = false
+
+        guard let url = card.picture else { return }
+        Task { @MainActor [weak self] in
+            let resultURL = await downloadFileDataTask(urlString: url)
+            guard self?.currentCard?.id == card.id,
+                  self?.currentCard?.picture == url else { return }
+            self?.imageURL = resultURL
         }
     }
     
     // Show the next card in the sequence
     func showNextCard() {
-        self.imageURL = nil
+        guard indexCards < totalCards else { return }
+        imageURL = nil
         indexCards += 1
-        if indexCards <= totalCards-1 {
+        if indexCards < totalCards {
             showCard()
-        }
-        else{
+        } else {
             currentCard = nil
         }
     }
@@ -67,16 +79,12 @@ class CardsViewerViewModel: ObservableObject {
     }
 
     func say(){
-        Task{
-            if let str = currentCard?.title {
-                if !shouldSaySlowly{
-                    voice.strToVoice(text: str)
-                }
-                else {
-                    voice.sayAgain()
-                }
-                shouldSaySlowly = !shouldSaySlowly
-            }
+        guard let text = currentCard?.title else { return }
+        if !shouldSaySlowly {
+            voice.strToVoice(text: text)
+        } else {
+            voice.sayAgain()
         }
+        shouldSaySlowly.toggle()
     }
 }

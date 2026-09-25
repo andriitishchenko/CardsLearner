@@ -29,7 +29,7 @@ struct CardsQuizScreen<ViewModel: CardsQuizModelInterface>: View {
                 
                 // Display the translation options
                 VStack(spacing: 10) {
-                    ForEach(viewModel.options, id: \.self) { option in
+                    ForEach(Array(viewModel.options.enumerated()), id: \.offset) { _, option in
                         Button(action: {
                             viewModel.selectOption(option)
                         }) {

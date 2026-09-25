@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class CardsQuizViewModel :CardsQuizModelInterface {
+final class CardsQuizViewModel: CardsQuizModelInterface {
     @Published var scoreTitle: String? = ""
     @Published var isCompleted: Bool = false
     @Published var displayTitle: String?
@@ -33,17 +33,28 @@ class CardsQuizViewModel :CardsQuizModelInterface {
         self.category = category
         self.totalCards = category.list.count
         list = category.list.shuffled()
+        if list.isEmpty {
+            isCompleted = true
+            scoreTitle = "Fails: 0"
+            progressText = "0 of 0"
+            return
+        }
         showCard()
     }
     
     func showCard() {
-        Task { @MainActor in
-            currentCard = list[indexCards]
-            displayTitle = currentCard?.title
-            progressText = "\(indexCards + 1) of \(totalCards)"
-            isNextButtonDisabled = indexCards >= totalCards - 1
-            generateOptions()
+        guard list.indices.contains(indexCards) else {
+            currentCard = nil
+            displayTitle = nil
+            options = []
+            isCompleted = true
+            return
         }
+        currentCard = list[indexCards]
+        displayTitle = currentCard?.title
+        progressText = "\(indexCards + 1) of \(totalCards)"
+        isNextButtonDisabled = indexCards >= totalCards - 1
+        generateOptions()
     }
     
     // Generate random translation options
@@ -54,10 +65,12 @@ class CardsQuizViewModel :CardsQuizModelInterface {
         allCards.shuffle()
         
         // Pick 2 random translations from other cards
-        let incorrectOptions = allCards.prefix(2).map { $0.translate }
+        let incorrectOptions = Array(Set(allCards.map(\.translate).filter { $0 != currentCard.translate }))
+            .shuffled()
+            .prefix(2)
         
         // Add the correct translation to the options
-        var newOptions = incorrectOptions
+        var newOptions = Array(incorrectOptions)
         newOptions.append(currentCard.translate)
         newOptions.shuffle() // Shuffle the order of options
         
@@ -66,15 +79,18 @@ class CardsQuizViewModel :CardsQuizModelInterface {
     
     // Select the option
     func selectOption(_ option: String) {
-        if isLoading {
-            return
-        }
+        guard !isLoading, options.contains(option), let currentCard else { return }
         isLoading = true
         selectedOption = option
-        if option == currentCard?.translate {
+        if option == currentCard.translate {
             isCorrect = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                self.showNextCard()
+            Task { @MainActor [weak self] in
+                do {
+                    try await Task.sleep(for: .seconds(2))
+                } catch {
+                    return
+                }
+                self?.showNextCard()
             }
         } else {
             isCorrect = false
@@ -85,8 +101,9 @@ class CardsQuizViewModel :CardsQuizModelInterface {
     
     // Show the next card
     func showNextCard() {
+        guard !list.isEmpty, indexCards < totalCards else { return }
         indexCards += 1
-        if indexCards <= totalCards - 1 {
+        if indexCards < totalCards {
             showCard()
             selectedOption = nil
             isCorrect = false

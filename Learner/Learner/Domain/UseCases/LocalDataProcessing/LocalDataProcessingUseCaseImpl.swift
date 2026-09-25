@@ -7,19 +7,47 @@
 
 import Foundation
 
-class LocalDataProcessingUseCaseImpl: LocalDataProcessingUseCase {
+enum LocalDataProcessingError: LocalizedError {
+    case integerOutOfRange
+
+    var errorDescription: String? {
+        "A card or category identifier is outside the supported storage range."
+    }
+}
+
+@MainActor
+final class LocalDataProcessingUseCaseImpl: LocalDataProcessingUseCase {
     
     let localRepository: LocalDataRepository
     
     init(localRepository: LocalDataRepository) {
         self.localRepository = localRepository
     }
+
+    func validate(data: [CategoryModel]) throws {
+        for category in data {
+            guard Int32(exactly: category.id) != nil,
+                  Int32(exactly: category.order) != nil else {
+                throw LocalDataProcessingError.integerOutOfRange
+            }
+            for card in category.list {
+                guard Int32(exactly: card.id) != nil,
+                      Int32(exactly: card.categoryId) != nil else {
+                    throw LocalDataProcessingError.integerOutOfRange
+                }
+            }
+        }
+    }
     
     // Конвертация ModelCard в CardEntity
-    func convertToCardEntity(from modelCard: ModelCard) -> CardEntity {
+    func convertToCardEntity(from modelCard: ModelCard) throws -> CardEntity {
+            guard let uid = Int32(exactly: modelCard.id),
+                  let categoryId = Int32(exactly: modelCard.categoryId) else {
+                throw LocalDataProcessingError.integerOutOfRange
+            }
             let cardEntity = self.localRepository.newCardEntity()
-            cardEntity.uid = Int32(modelCard.id)
-            cardEntity.categoryId = Int32(modelCard.categoryId)
+            cardEntity.uid = uid
+            cardEntity.categoryId = categoryId
             cardEntity.title = modelCard.title
             cardEntity.imageURL = URL(string: modelCard.picture ?? "")
             cardEntity.voice = modelCard.voice
@@ -31,14 +59,18 @@ class LocalDataProcessingUseCaseImpl: LocalDataProcessingUseCase {
     }
 
     // Конвертация CategoryModel в GroupEntity
-    func convertToGroupEntity(from categoryModel: CategoryModel) -> GroupEntity {
+    func convertToGroupEntity(from categoryModel: CategoryModel) throws -> GroupEntity {
+        guard let uid = Int32(exactly: categoryModel.id),
+              let order = Int32(exactly: categoryModel.order) else {
+            throw LocalDataProcessingError.integerOutOfRange
+        }
         let groupEntity = self.localRepository.newGroupEntity()
-        groupEntity.uid = Int32(categoryModel.id)
-        groupEntity.order = Int32(categoryModel.order)
+        groupEntity.uid = uid
+        groupEntity.order = order
         groupEntity.title = categoryModel.title
         groupEntity.imageURL = URL(string: categoryModel.picture)
         
-        let cards = categoryModel.list.map { convertToCardEntity(from: $0) }
+        let cards = try categoryModel.list.map { try convertToCardEntity(from: $0) }
         groupEntity.addToCards(NSSet(array: cards))
         
         return groupEntity
@@ -78,7 +110,7 @@ class LocalDataProcessingUseCaseImpl: LocalDataProcessingUseCase {
     }
     
     func executeSave(data:[CategoryModel]) async throws {
-        let list = data.map{ convertToGroupEntity(from: $0) }
+        let list = try data.map { try convertToGroupEntity(from: $0) }
         try await self.localRepository.saveGroups(list)
     }
     

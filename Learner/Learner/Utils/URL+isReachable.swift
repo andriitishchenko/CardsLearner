@@ -13,35 +13,17 @@ enum URLReachabilityError: Error {
 }
 
 extension URL {
-    func isReachable() throws -> Bool {
+    func isReachable() async throws -> Bool {
         var request = URLRequest(url: self)
         request.httpMethod = "HEAD"
-        
-        let semaphore = DispatchSemaphore(value: 0) // To make the request synchronous
-        var isReachable = false
-        var requestError: Error?
 
-        let task = URLSession.shared.dataTask(with: request) { _, response, error in
-            if let error = error {
-                requestError = error
-            } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                isReachable = true
-            }
-            semaphore.signal()
+        let (_, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLReachabilityError.invalidResponse
         }
-        task.resume()
-        
-        // Wait for the network request to finish
-        semaphore.wait()
-        
-        if let error = requestError {
-            throw error
-        }
-        
-        guard isReachable else {
+        guard (200...299).contains(httpResponse.statusCode) else {
             throw URLReachabilityError.unreachable
         }
-        
-        return isReachable
+        return true
     }
 }

@@ -22,9 +22,14 @@ xcodebuild -project Learner/Learner.xcodeproj -scheme Learner -destination 'plat
 
 The test command requires an installed simulator and resolved Swift Package Manager dependencies. Current test coverage and test-scheme limitations are tracked in [behavior records](DOCS/behavior/README.md).
 
+## App Store releases
+
+The Fastlane iOS release lane loads the repository-root `.env` file. Set `FASTLANE_PASSWORD` there before running `bundle exec fastlane ios release`. The `.env` file is excluded from Git so account credentials stay local; do not commit it.
+
 ## Documentation
 
 - [Architecture](DOCS/architecture.md)
+- [Backlog](DOCS/backlog.md)
 - [Behavior records and template](DOCS/behavior/README.md)
 - [Architecture decision and constraints](DOCS/decisions/data-boundaries.md)
 - [Agent instructions](AGENTS.md)

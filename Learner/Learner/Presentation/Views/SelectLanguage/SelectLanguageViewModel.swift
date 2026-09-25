@@ -19,7 +19,8 @@ struct Language: Hashable {
     let url: String
 }
 
-class SelectLanguageViewModel: ObservableObject {
+@MainActor
+final class SelectLanguageViewModel: ObservableObject {
     @Published var baseURL: String = ""
     @Published var translateURL: String = ""
     @Published var message: String = ""
@@ -42,6 +43,7 @@ class SelectLanguageViewModel: ObservableObject {
     ]
     
     private var appIntent: AppIntent
+    private var clearMessageTask: Task<Void, Never>?
     
     init(appIntent: AppIntent) {
         selectedBaseLanguage = languages[0]
@@ -59,8 +61,11 @@ class SelectLanguageViewModel: ObservableObject {
         let a_category = t_baseURL?.appendingPathComponent("categories.json", conformingTo: .url)
         let a_cards = t_baseURL?.appendingPathComponent("cards.json", conformingTo: .url)
         do{
-            _ = try a_category?.isReachable()
-            _ = try a_cards?.isReachable()
+            guard let a_category, let a_cards else {
+                throw RepoValidationError.invalidBaseURLJson
+            }
+            _ = try await a_category.isReachable()
+            _ = try await a_cards.isReachable()
         }
         catch {
             throw RepoValidationError.invalidBaseURLJson
@@ -68,29 +73,35 @@ class SelectLanguageViewModel: ObservableObject {
         
         let b_cards = t_translateURL?.appendingPathComponent("cards.json", conformingTo: .url)
         do{
-            _ = try b_cards?.isReachable()
+            guard let b_cards else {
+                throw RepoValidationError.invalidLearnURLJson
+            }
+            _ = try await b_cards.isReachable()
         }
         catch{
             throw RepoValidationError.invalidLearnURLJson
         }
         
-        await appIntent.updateUserSettings(origin: t_baseURL!.absoluteString, cards: t_translateURL!.absoluteString)
+        guard let t_baseURL, let t_translateURL else {
+            throw RepoValidationError.invalidBaseURLJson
+        }
+        appIntent.updateUserSettings(origin: t_baseURL.absoluteString, cards: t_translateURL.absoluteString)
     }
     
     // Optionally load saved URLs when initializing
     func loadURLs() {
         Task { @MainActor in
-            let upr: UserSettings = await appIntent.getUserSettings()!
+            guard let upr = await appIntent.getUserSettings() else { return }
                 baseURL = upr.originURL
                 translateURL = upr.learnURL
             
             selectedBaseLanguage = languages.first(where: {
                 return $0.url == baseURL
-            }) ?? languages.last!
+            }) ?? languages[languages.count - 1]
             
             selectedLearnLanguage = languages.first(where: {
                 return $0.url == translateURL
-            }) ?? languages.last!
+            }) ?? languages[languages.count - 1]
             
         }
     }
@@ -118,9 +129,14 @@ class SelectLanguageViewModel: ObservableObject {
     @MainActor
     func showMessage(_ str:String) async{
         message = str
-        Task {
-            try await Task.sleep(for: .seconds(3))
-            self.message = ""
+        clearMessageTask?.cancel()
+        clearMessageTask = Task { @MainActor [weak self] in
+            do {
+                try await Task.sleep(for: .seconds(3))
+            } catch {
+                return
+            }
+            self?.message = ""
         }
     }    
 }

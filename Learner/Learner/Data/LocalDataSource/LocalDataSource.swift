@@ -1,3 +1,4 @@
+@MainActor
 protocol LocalDataSource {
     func saveGroup(_ group: GroupEntity) async throws
     func saveGroups(_ groups: [GroupEntity]) async throws

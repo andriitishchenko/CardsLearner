@@ -6,7 +6,8 @@
 //
 
 import Foundation
-class UserSettingsUseCaseImpl: UserSettingsUseCase {
+@MainActor
+final class UserSettingsUseCaseImpl: UserSettingsUseCase {
     
     private let userDefaultsRepository: UserDefaultsRepository
     

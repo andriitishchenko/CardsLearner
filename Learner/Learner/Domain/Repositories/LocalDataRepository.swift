@@ -1,4 +1,5 @@
-protocol LocalDataRepository {    
+@MainActor
+protocol LocalDataRepository {
     func saveGroup(_ group: GroupEntity) async throws
     func saveGroups(_ groups: [GroupEntity]) async throws
     func fetchGroups() async throws -> [GroupEntity]

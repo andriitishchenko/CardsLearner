@@ -7,6 +7,7 @@
 
 import CoreData
 
+@MainActor
 struct PersistenceController {
     static let shared = PersistenceController()
 
@@ -33,7 +34,12 @@ struct PersistenceController {
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "Learner")
         if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+            let memoryStoreURL = URL(fileURLWithPath: "/dev/null")
+            if let storeDescription = container.persistentStoreDescriptions.first {
+                storeDescription.url = memoryStoreURL
+            } else {
+                container.persistentStoreDescriptions = [NSPersistentStoreDescription(url: memoryStoreURL)]
+            }
         }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {

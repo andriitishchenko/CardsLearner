@@ -7,9 +7,13 @@
 
 import Foundation
 
-struct CategoryModel: Codable, Equatable, Hashable {
+struct CategoryModel: Codable, Equatable, Hashable, Sendable {
     static func == (lhs: CategoryModel, rhs: CategoryModel) -> Bool {
         return lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
     let id: Int
     let title: String

@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 protocol UserSettingsUseCase {
     func executeSave(settings: UserSettings) async throws
     func executeLoad() async throws -> UserSettings

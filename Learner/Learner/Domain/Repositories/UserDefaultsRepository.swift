@@ -6,6 +6,7 @@
 //
 
 import Foundation
+@MainActor
 protocol UserDefaultsRepository {
     func saveUserSettings(_ settings: UserSettings) async throws
     func loadUserSettings() async throws -> UserSettings

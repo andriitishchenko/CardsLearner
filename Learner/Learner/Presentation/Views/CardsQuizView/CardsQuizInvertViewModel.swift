@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class CardsQuizInvertViewModel: CardsQuizModelInterface {
+final class CardsQuizInvertViewModel: CardsQuizModelInterface {
     @Published var scoreTitle: String? = ""
     @Published var isCompleted: Bool = false
     @Published var displayTitle: String?
@@ -32,17 +32,28 @@ class CardsQuizInvertViewModel: CardsQuizModelInterface {
         self.category = category
         self.totalCards = category.list.count
         list = category.list.shuffled()
+        if list.isEmpty {
+            isCompleted = true
+            scoreTitle = "Fails: 0"
+            progressText = "0 of 0"
+            return
+        }
         showCard()
     }
     
     func showCard() {
-        Task { @MainActor in
-            currentCard = list[indexCards]
-            displayTitle = currentCard?.translate
-            progressText = "\(indexCards + 1) of \(totalCards)"
-            isNextButtonDisabled = indexCards >= totalCards - 1
-            generateOptions()
+        guard list.indices.contains(indexCards) else {
+            currentCard = nil
+            displayTitle = nil
+            options = []
+            isCompleted = true
+            return
         }
+        currentCard = list[indexCards]
+        displayTitle = currentCard?.translate
+        progressText = "\(indexCards + 1) of \(totalCards)"
+        isNextButtonDisabled = indexCards >= totalCards - 1
+        generateOptions()
     }
     
     private func generateOptions() {
@@ -52,10 +63,12 @@ class CardsQuizInvertViewModel: CardsQuizModelInterface {
         allCards.shuffle()
         
         // Pick 2 random titles from other cards
-        let incorrectOptions = allCards.prefix(2).map { $0.title }
+        let incorrectOptions = Array(Set(allCards.map(\.title).filter { $0 != currentCard.title }))
+            .shuffled()
+            .prefix(2)
         
         // Add the correct title to the options
-        var newOptions = incorrectOptions
+        var newOptions = Array(incorrectOptions)
         newOptions.append(currentCard.title)
         newOptions.shuffle() // Shuffle the order of options
         
@@ -63,15 +76,18 @@ class CardsQuizInvertViewModel: CardsQuizModelInterface {
     }
     
     func selectOption(_ option: String) {
-        if isLoading {
-            return
-        }
+        guard !isLoading, options.contains(option), let currentCard else { return }
         isLoading = true
         selectedOption = option
-        isCorrect = (option == currentCard?.title)
+        isCorrect = option == currentCard.title
         if isCorrect {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                self.showNextCard()
+            Task { @MainActor [weak self] in
+                do {
+                    try await Task.sleep(for: .seconds(2))
+                } catch {
+                    return
+                }
+                self?.showNextCard()
             }
         }else{
             isLoading = false
@@ -81,8 +97,9 @@ class CardsQuizInvertViewModel: CardsQuizModelInterface {
     }
     
     func showNextCard() {
+        guard !list.isEmpty, indexCards < totalCards else { return }
         indexCards += 1
-        if indexCards <= totalCards - 1 {
+        if indexCards < totalCards {
             showCard()
             selectedOption = nil
             isCorrect = false

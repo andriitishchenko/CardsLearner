@@ -27,6 +27,6 @@ The remote API expects `categories.json` and `cards.json` at each configured lan
 
 ## Build and tests
 
-The project is an Xcode project with the shared `Learner` scheme. Swift Package Manager resolves Firebase SDK products and Google Mobile Ads. The main app deployment target is iOS 16.0, and the import extension deployment target is iOS 18.0. Build and test command templates are in the [README](../README.md#build-and-test).
+The project is an Xcode project with the shared `Learner` scheme. All Swift targets use Swift 6 language mode. Swift Package Manager resolves Firebase SDK products (12.19.2) and Google Mobile Ads (13.10.0); each workspace records its resolved package graph in `Package.resolved`. Fastlane Ruby tooling is declared in `Gemfile` and locked at 2.240.1 in `Gemfile.lock`. The main app deployment target is iOS 16.0, and the import extension deployment target is iOS 18.0. Build and test command templates are in the [README](../README.md#build-and-test).
 
-The project defines `LearnerTests` and `LearnerUITests` targets. The shared scheme also references a `LearnerUITests1` testable that is not defined as a project target, so scheme test execution needs verification. Existing unit coverage includes API response decoding, non-success HTTP status handling, and decoding failures. See [API and app behavior](behavior/app.md) for coverage details and known verification limitations.
+The project and shared scheme define `LearnerTests` and `LearnerUITests` targets. Existing unit coverage includes API response decoding, non-success HTTP status handling, and decoding failures. See [API and app behavior](behavior/app.md) for coverage details and known verification limitations.

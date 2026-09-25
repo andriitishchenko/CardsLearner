@@ -7,7 +7,7 @@
 
 import Foundation
 
-class AggregateDataUseCaseImpl: AggregateDataUseCase {
+final class AggregateDataUseCaseImpl: AggregateDataUseCase, Sendable {
     private let settings: UserSettings
     private let remoteRepository: RemoteDataRepository
     
@@ -23,7 +23,6 @@ class AggregateDataUseCaseImpl: AggregateDataUseCase {
         
         do {
             let (categories, originCards, learnCards) = try await (categoriesFetch, originCardsFetch, learnCardsFetch)
-            let langCode = categories.lang
             var modelCard = [ModelCard]()
 
             for item in originCards.list {

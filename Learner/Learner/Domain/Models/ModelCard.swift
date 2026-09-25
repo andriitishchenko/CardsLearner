@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct ModelCard: Codable, Hashable {
+struct ModelCard: Codable, Hashable, Sendable {
     let id: Int
     let categoryId: Int
     let title: String

@@ -1,6 +1,7 @@
 import Foundation
 
-class LocalDataRepositoryImpl: LocalDataRepository {
+@MainActor
+final class LocalDataRepositoryImpl: LocalDataRepository {
     func newCardEntity() -> CardEntity {
         return self.localDataSource.newCardEntity()
     }

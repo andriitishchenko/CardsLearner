@@ -10,15 +10,15 @@ import SwiftUI
 // https://github.com/googleads/googleads-mobile-ios-examples/blob/69fb7c66637e935dc07a08e6bc8cc2ed1a5dc468/Swift/advanced/SwiftUIDemo/SwiftUIDemo/Banner/BannerContentView.swift#L30-L52
 
     struct BannerViewAd: UIViewRepresentable {
-      let adSize: GADAdSize
+      let adSize: AdSize
 
-      init(_ adSize: GADAdSize) {
+      init(_ adSize: AdSize) {
         self.adSize = adSize
       }
 
       func makeUIView(context: Context) -> UIView {
-        // Wrap the GADBannerView in a UIView. GADBannerView automatically reloads a new ad when its
-        // frame size changes; wrapping in a UIView container insulates the GADBannerView from size
+        // Wrap the Google Mobile Ads banner in a UIView. The banner automatically reloads a new ad when its
+        // frame size changes; wrapping it insulates the banner from size
         // changes that impact the view returned from makeUIView.
         let view = UIView()
         view.addSubview(context.coordinator.bannerView)
@@ -35,13 +35,14 @@ import SwiftUI
       // [END create_banner_view]
 
       // [START create_banner]
-      class BannerCoordinator: NSObject, GADBannerViewDelegate {
+      @MainActor
+      final class BannerCoordinator: NSObject, GoogleMobileAds.BannerViewDelegate {
 
-        private(set) lazy var bannerView: GADBannerView = {
-          let banner = GADBannerView(adSize: parent.adSize)
+        private(set) lazy var bannerView: GoogleMobileAds.BannerView = {
+          let banner = GoogleMobileAds.BannerView(adSize: parent.adSize)
           // [START load_ad]
           banner.adUnitID = ""// "ca-app-pub-3940256099942544/2435281174"
-          banner.load(GADRequest())
+          banner.load(Request())
           // [END load_ad]
           // [START set_delegate]
           banner.delegate = self
@@ -58,11 +59,11 @@ import SwiftUI
 
         // MARK: - GADBannerViewDelegate methods
 
-        func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+        func bannerViewDidReceiveAd(_ bannerView: GoogleMobileAds.BannerView) {
           print("DID RECEIVE AD.")
         }
 
-        func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
+        func bannerView(_ bannerView: GoogleMobileAds.BannerView, didFailToReceiveAdWithError error: Error) {
           print("FAILED TO RECEIVE AD: \(error.localizedDescription)")
         }
       }

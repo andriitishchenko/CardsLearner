@@ -14,7 +14,8 @@ enum ValidateStatus: Int{
     case invalid
 }
 
-class CardsMixedLettersViewModel: ObservableObject {
+@MainActor
+final class CardsMixedLettersViewModel: ObservableObject {
     @Published var currentCard: ModelCard?
     @Published var currentWordIndex = 0
     @Published var totalWords = 0
@@ -36,9 +37,9 @@ class CardsMixedLettersViewModel: ObservableObject {
     init(appIntent: AppIntent, category: CategoryModel) {
         self.appIntent = appIntent
         self.category = category
-        list = category.list.shuffled()
-        self.totalWords = category.list.count
-        self.voice = Voice(lang: category.list[0].localCode)
+        list = category.list.filter { !$0.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.shuffled()
+        self.totalWords = list.count
+        self.voice = Voice(lang: category.list.first?.localCode ?? "en")
         loadNextWord()
     }
     
@@ -70,6 +71,9 @@ class CardsMixedLettersViewModel: ObservableObject {
     }
     
     func selectLetter(_ letter: String) {
+        let usedCount = selectedLetters.flatMap { $0.compactMap { $0 } }.filter { $0 == letter }.count
+        guard usedCount < letterOptions.filter({ $0 == letter }).count else { return }
+
         for lineIndex in 0..<selectedLetters.count {
             if let index = selectedLetters[lineIndex].firstIndex(where: { $0 == nil }) {
                 selectedLetters[lineIndex][index] = letter
@@ -99,7 +103,13 @@ class CardsMixedLettersViewModel: ObservableObject {
         
         if selectedPhrase == originalPhrase {
             validationStatus = .valid
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            Task { @MainActor [weak self] in
+                do {
+                    try await Task.sleep(for: .seconds(1))
+                } catch {
+                    return
+                }
+                guard let self else { return }
                 self.currentWordIndex += 1
                 self.loadNextWord()
             }
@@ -110,17 +120,13 @@ class CardsMixedLettersViewModel: ObservableObject {
     }
     
     func say(){
-        Task{
-            if let str = currentCard?.title {
-                if !shouldSaySlowly{
-                    voice.strToVoice(text: str)
-                }
-                else {
-                    voice.sayAgain()
-                }
-                shouldSaySlowly = !shouldSaySlowly
-            }
+        guard let text = currentCard?.title else { return }
+        if !shouldSaySlowly {
+            voice.strToVoice(text: text)
+        } else {
+            voice.sayAgain()
         }
+        shouldSaySlowly.toggle()
     }
     
     func statusColor() -> Color{

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RestCard: Codable {
+struct RestCard: Codable, Sendable {
     let id: Int
     let categoryId: Int
     let title: String
@@ -16,20 +16,20 @@ struct RestCard: Codable {
     var transcription: String?
 }
 
-struct RestCategory: Codable {
+struct RestCategory: Codable, Sendable {
     let id:Int
     let order:Int
     let title: String
     let picture: String
 }
 
-struct CategoryResponse: Codable {
+struct CategoryResponse: Codable, Sendable {
     let lang: String
     let version: Int
     let list: [RestCategory]
 }
 
-struct CardResponse: Codable {
+struct CardResponse: Codable, Sendable {
     let version: Int
     let lang: String
     let list: [RestCard]

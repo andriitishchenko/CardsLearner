@@ -36,9 +36,7 @@ class AppIntent: Intent {
     }
     
     func forceFetching(isForce:Bool = false) async{
-        await MainActor.run {
-            isLoading = true
-        }
+        isLoading = true
         
         if (isForce){
             print("Fetch")
@@ -54,15 +52,10 @@ class AppIntent: Intent {
                 await self.loadLocalData()
             }
             else{
-                await MainActor.run {
-                    print("Loaded")
-                    self.navigate(to: .list)
-                }
+                self.navigate(to: .list)
             }
         }
-        await MainActor.run {
-            isLoading = false
-        }
+        isLoading = false
     }
     
     func updateUserSettings(origin:String, cards:String) {
@@ -97,8 +90,7 @@ class AppIntent: Intent {
             let list = try await aggragate.execute()
             try await self.saveFetchedData(list)
             
-            try await self.downloadImages(list)
-            isLoading = false
+            await self.downloadImages(list)
         } catch {
             errorMessage = "E: \(error.localizedDescription)"
         }
@@ -110,7 +102,6 @@ class AppIntent: Intent {
         let localDataProcessor = LocalDataProcessingUseCaseImpl(localRepository: localRepository)
         do{
             self.list = try await localDataProcessor.executeLoad()
-            isLoading = false
         }catch {
             errorMessage = "\(error.localizedDescription)"
         }
@@ -119,25 +110,26 @@ class AppIntent: Intent {
     private func saveFetchedData(_ list: [CategoryModel]) async throws {
         let localRepository = LocalDataRepositoryImpl(localDataSource: self.localDatasource)
         let localDataProcessor = LocalDataProcessingUseCaseImpl(localRepository: localRepository)
-        do{
-            try await localDataProcessor.cleanup()
-            try await localDataProcessor.executeSave(data: list)
-        }catch {
-            errorMessage = "\(error.localizedDescription)"
-        }
+        try localDataProcessor.validate(data: list)
+        try await localDataProcessor.cleanup()
+        try await localDataProcessor.executeSave(data: list)
     }
     
-    private func downloadImages(_ list: [CategoryModel]) async throws {
-        DispatchQueue.global(qos: .background).async {
-            for category in list {
-                Task{
-                    _ = await downloadFileDataTask(urlString: category.picture)
-                }
-                for card in category.list {
-                    Task{
-                        _ = await downloadFileDataTask(urlString: card.picture ?? "")
+    private func downloadImages(_ list: [CategoryModel]) async {
+        let imageURLs = list.flatMap { category in
+            [category.picture] + category.list.compactMap(\.picture)
+        }
+
+        for startIndex in stride(from: 0, to: imageURLs.count, by: 8) {
+            let endIndex = min(startIndex + 8, imageURLs.count)
+            let batch = imageURLs[startIndex..<endIndex]
+            await withTaskGroup(of: Void.self) { group in
+                for url in batch {
+                    group.addTask {
+                        _ = await downloadFileDataTask(urlString: url)
                     }
                 }
+                await group.waitForAll()
             }
         }
     }
@@ -149,29 +141,31 @@ class AppIntent: Intent {
     }
     
     func navigateBack() {
+        guard !navigationPath.isEmpty else { return }
         navigationPath.removeLast()
     }
     
     func clearNavigation() {
-        navigationPath.removeLast(navigationPath.count)
+        navigationPath = NavigationPath()
     }
         
     func handleImport(file: URL){
         
-        var strLang = "en"
-        if list.count > 0{
-            strLang = (list.first?.list.first!.localCode)!
-        }
+        let strLang = list.lazy.compactMap { $0.list.first?.localCode }.first ?? "en"
         
         if let test1 = getQueryStringParameter(url: file.absoluteString, param: "importFile"){
-            if let u = URL(string: test1){
-                handleImport(file: u)
+            if let u = URL(string: test1), u != file, u.isFileURL {
+                handleImportContents(file: u, language: strLang)
             }
             return
         }
-        
+
+        handleImportContents(file: file, language: strLang)
+    }
+
+    private func handleImportContents(file: URL, language strLang: String) {
         isLoading = true
-        if let pairs = parseFileToWordPairs(file: file){
+        if let pairs = parseFileToWordPairs(file: file), !pairs.isEmpty {
             self.list.removeAll(where: { $0.id == 1000 } )
             var list: [ModelCard] = []
             var int = 0
@@ -184,7 +178,7 @@ class AppIntent: Intent {
                                      categoryId: 1000,
                                      title: pair.0,
                                      translate: pair.1,
-                                     localCode:strLang,
+                                     localCode: strLang,
                                      picture: nil,
 // TODO:                                        "https://loremflickr.com/640/480/\(pair.0)",
                                      voice: nil,
@@ -199,8 +193,9 @@ class AppIntent: Intent {
             
             let cm = CategoryModel(id: 1000, title: "Imported", picture: picURL, order: 0, list: list)
             self.list.append(cm)
+        } else {
+            errorMessage = "The selected file contains no valid word pairs."
         }
         isLoading = false
     }
 }
-

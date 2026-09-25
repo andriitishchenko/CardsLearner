@@ -15,11 +15,13 @@ struct CardsMixedLettersView: View {
             if viewModel.isCompleted {
                 CompletedView(failedWordsCount: viewModel.failedWordsCount)
             } else {
-                Text("\(viewModel.currentCard!.translate)\(Image(systemName: "speaker.wave.3"))")
-                    .font(.headline)
-                    .onTapGesture {
-                        viewModel.say()
-                    }
+                if let currentCard = viewModel.currentCard {
+                    Text("\(currentCard.translate)\(Image(systemName: "speaker.wave.3"))")
+                        .font(.headline)
+                        .onTapGesture {
+                            viewModel.say()
+                        }
+                }
                 Text("\(viewModel.currentWordIndex + 1) of \(viewModel.totalWords)")
                     .padding(.bottom)
 

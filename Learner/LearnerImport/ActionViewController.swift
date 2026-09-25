@@ -1,87 +1,58 @@
 import UIKit
-import MobileCoreServices
 import SwiftUI
+import UniformTypeIdentifiers
 
+@MainActor
 class ActionViewController: UIViewController {
 
     var receivedText: String?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         extractTextOrFileFromInput()
     }
 
     private func extractTextOrFileFromInput() {
-        // Ensure we have input items from the extension context
-        guard let inputItems = self.extensionContext?.inputItems as? [NSExtensionItem] else {
-            DispatchQueue.main.async {
-                self.showErrorView()
-            }
+        guard let inputItems = extensionContext?.inputItems as? [NSExtensionItem] else {
+            showErrorView()
             return
         }
-        
-        for item in inputItems {
-            guard let attachments = item.attachments else { continue }
-            
-            for attachment in attachments {
-                // First, attempt to handle plain text
-                if attachment.hasItemConformingToTypeIdentifier(kUTTypePlainText as String) {
-                    attachment.loadItem(forTypeIdentifier: kUTTypePlainText as String, options: nil) { (data, error) in
-                        if let text = data as? String {
-                            self.receivedText = text
-                            print("Received text: \(text)")
-                            
-                            DispatchQueue.main.async {
-                                self.showActionView()
-                            }
-                        } else {
-                            // Attempt to handle as a file if text fails
-                            self.handleFileAttachment(attachment)
-                        }
-                    }
-                } else {
-                    // Handle file attachments if they are not plain text
-                    handleFileAttachment(attachment)
-                }
-            }
-        }
-    }
 
-    // Helper function to process file attachments
-    private func handleFileAttachment(_ attachment: NSItemProvider) {
-        if attachment.hasItemConformingToTypeIdentifier(kUTTypeFileURL as String) {
-            attachment.loadItem(forTypeIdentifier: kUTTypeFileURL as String, options: nil) { (data, error) in
-                if let fileURL = data as? URL {
-                    // Process the file URL as needed
-                    self.processFile(at: fileURL)
-                    
-                    DispatchQueue.main.async {
-                        self.showActionView()
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        self.showErrorView()
-                    }
-                }
-            }
-        } else {
-            DispatchQueue.main.async {
-                self.showErrorView()
-            }
+        let providers = inputItems.flatMap { $0.attachments ?? [] }
+        guard let attachment = providers.first(where: {
+            $0.hasItemConformingToTypeIdentifier(UTType.plainText.identifier)
+                || $0.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier)
+        }) else {
+            showErrorView()
+            return
         }
-    }
 
-    // Additional function to handle file processing
-    private func processFile(at url: URL) {
-        do {
-            // Example: Read file content as text
-            let fileContent = try String(contentsOf: url, encoding: .utf8)
-            self.receivedText = fileContent
-            print("Received file content: \(fileContent)")
-        } catch {
-            print("Failed to read file content: \(error)")
-            DispatchQueue.main.async {
-                self.showErrorView()
+        let typeIdentifier = attachment.hasItemConformingToTypeIdentifier(UTType.plainText.identifier)
+            ? UTType.plainText.identifier
+            : UTType.fileURL.identifier
+
+        attachment.loadItem(forTypeIdentifier: typeIdentifier, options: nil) { [weak self] data, error in
+            guard error == nil else {
+                Task { @MainActor [weak self] in self?.showErrorView() }
+                return
+            }
+
+            let text: String?
+            if typeIdentifier == UTType.plainText.identifier {
+                text = data as? String
+            } else if let fileURL = data as? URL {
+                text = try? String(contentsOf: fileURL, encoding: .utf8)
+            } else {
+                text = nil
+            }
+
+            Task { @MainActor [weak self] in
+                guard let self, let text else {
+                    self?.showErrorView()
+                    return
+                }
+                self.receivedText = text
+                self.showActionView()
             }
         }
     }
@@ -89,31 +60,24 @@ class ActionViewController: UIViewController {
     private func parseTextIntoColumns() -> [(String, String)] {
         guard let text = receivedText else { return [] }
         
-        // Split the text into lines
-        let lines = text.split(whereSeparator: \.isNewline).map { String($0) }
-        
-        var wordPairs: [(String, String)] = []
-        
-        // Define delimiters
-        let delimiters = ["\t", "-", ";", ","]
-        
-        // Parse each line        
-        for line in lines {
-            // Split the line using the defined delimiters
-            let components = line.components(separatedBy: CharacterSet(charactersIn: delimiters.joined()))
-                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            
-            if components.count >= 2 {
-                // Store the first two trimmed components as a tuple in wordPairs
-                wordPairs.append((components[0], components[1]))
+        return text.split(whereSeparator: \.isNewline).compactMap { line in
+            for separator in ["\t", ";", ",", " - ", "–", "—", "-"] {
+                guard let range = line.range(of: separator) else { continue }
+                let word = line[..<range.lowerBound].trimmingCharacters(in: .whitespacesAndNewlines)
+                let translation = line[range.upperBound...].trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !word.isEmpty, !translation.isEmpty else { return nil }
+                return (word, translation)
             }
+            return nil
         }
-        
-        return wordPairs
     }
 
     private func showActionView() {
         let wordPairs = parseTextIntoColumns() // Get the word pairs
+        guard !wordPairs.isEmpty else {
+            showErrorView()
+            return
+        }
         
         let actionView = ActionView(wordPairs: wordPairs) {
             // Handle continue action
@@ -183,26 +147,23 @@ class ActionViewController: UIViewController {
         // Convert word pairs to a single string with each pair on a new line
         let contentText = wordPairs.map { "\($0.0) - \($0.1)" }.joined(separator: "\n")
 
-        var fileURL: URL?
-        // Get the shared container URL
-        if let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.at.flashcards") {
-            fileURL = sharedContainerURL.appendingPathComponent("sharedData.txt")
-
-            do {
-                // Write the formatted content to the file
-                try contentText.write(to: fileURL!, atomically: true, encoding: .utf8)
-                print("Data saved to shared file at \(fileURL)")
-            } catch {
-                print("Error saving file: \(error)")
-            }
+        guard let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.at.flashcards") else {
+            return nil
         }
-        return fileURL
+
+        let fileURL = sharedContainerURL.appendingPathComponent("sharedData.txt")
+        do {
+            try contentText.write(to: fileURL, atomically: true, encoding: .utf8)
+            return fileURL
+        } catch {
+            print("Error saving shared import: \(error.localizedDescription)")
+            return nil
+        }
     }
     
     private func notifyHostAppOfNewData(url:URL) {
         let sharedDefaults = UserDefaults(suiteName: "group.at.flashcards")
-        sharedDefaults?.set(url, forKey: "IMPORT_PATH") // Store the current date
-        sharedDefaults?.synchronize() // Ensure changes are saved
+        sharedDefaults?.set(url.absoluteString, forKey: "IMPORT_PATH")
     }
     
     private func openHostApp() {
@@ -227,5 +188,3 @@ class ActionViewController: UIViewController {
         return false
     }
 }
-
-

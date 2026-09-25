@@ -25,8 +25,8 @@ struct ActionView: View {
             ScrollView{
                 HStack {
                     VStack(alignment: .trailing) {
-                        ForEach(wordPairs, id: \.0) { pair in // Use the first element of the tuple as the ID
-                            Text(pair.0)
+                        ForEach(Array(wordPairs.enumerated()), id: \.offset) { entry in
+                            Text(entry.element.0)
                                 .padding(5)
                         }
                     }
@@ -37,8 +37,8 @@ struct ActionView: View {
                         .background(Color.gray)
 
                     VStack(alignment: .leading) {
-                        ForEach(wordPairs, id: \.1) { pair in // Use the second element of the tuple as the ID
-                            Text(pair.1)
+                        ForEach(Array(wordPairs.enumerated()), id: \.offset) { entry in
+                            Text(entry.element.1)
                                 .padding(5)
                         }
                     }

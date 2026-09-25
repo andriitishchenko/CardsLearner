@@ -1,6 +1,7 @@
 import CoreData
 
-class LocalDataSourceImpl: LocalDataSource {
+@MainActor
+final class LocalDataSourceImpl: LocalDataSource {
     
     private let context: NSManagedObjectContext
     
@@ -85,7 +86,6 @@ class LocalDataSourceImpl: LocalDataSource {
     
     func saveContext() async throws{
         try context.save()
-        try await Task.sleep(for: .seconds(2))
         print("context saved")
     }
 }

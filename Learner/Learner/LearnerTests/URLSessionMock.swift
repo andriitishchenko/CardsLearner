@@ -14,7 +14,8 @@ import Foundation
 //}
 
 // Мок-класс для URLSession для использования в тестах
-class URLSessionMock: URLSessionProtocol {
+// Tests configure this mock before each request and do not mutate it while a request is running.
+final class URLSessionMock: URLSessionProtocol, @unchecked Sendable {
     var data: Data?
     var error: Error?
     var response: URLResponse?
@@ -27,7 +28,14 @@ class URLSessionMock: URLSessionProtocol {
         }
         
         // Возвращаем данные и ответ (или создаём дефолтный ответ, если он не задан)
-        let response = self.response ?? HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)!
+        let response: URLResponse
+        if let configuredResponse = self.response {
+            response = configuredResponse
+        } else if let defaultResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil) {
+            response = defaultResponse
+        } else {
+            throw URLError(.badServerResponse)
+        }
         return (data ?? Data(), response)
     }
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-class APIClientImpl: APIClient {
+final class APIClientImpl: APIClient {
     private let session: URLSessionProtocol
     
     init(session: URLSessionProtocol = URLSession.shared) {
@@ -8,13 +8,19 @@ class APIClientImpl: APIClient {
     }
     
     func performRequest<T: Decodable>(endpoint: String) async throws -> T {
-        guard let url = URL(string: endpoint) else {
+        guard let url = URL(string: endpoint),
+              let scheme = url.scheme?.lowercased(),
+              ["http", "https"].contains(scheme),
+              url.host != nil else {
             throw URLError(.badURL)
         }
         
         let (data, response) = try await session.data(from: url)
         
-        if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.nonHTTPResponse
+        }
+        if !(200...299).contains(httpResponse.statusCode) {
             throw APIError.invalidResponse(statusCode: httpResponse.statusCode)
         }
         
@@ -34,17 +40,22 @@ enum APIError: Error, LocalizedError, Equatable {
                 return lhsCode == rhsCode
             case (.decodingError, .decodingError):
                 return true
+            case (.nonHTTPResponse, .nonHTTPResponse):
+                return true
             default:
                 return false
             }
         }
     case invalidResponse(statusCode: Int)
+    case nonHTTPResponse
     case decodingError(Error)
     
     var errorDescription: String? {
         switch self {
         case .invalidResponse(let statusCode):
             return "Received invalid response with status code \(statusCode)."
+        case .nonHTTPResponse:
+            return "Received a non-HTTP response."
         case .decodingError(let error):
             return "Failed to decode the response: \(error.localizedDescription)"
         }

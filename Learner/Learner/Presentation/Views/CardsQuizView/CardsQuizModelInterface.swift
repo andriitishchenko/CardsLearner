@@ -7,7 +7,8 @@
 
 import Combine
 
-protocol CardsQuizModelInterface : ObservableObject{
+@MainActor
+protocol CardsQuizModelInterface: ObservableObject {
     var currentCard: ModelCard? { get set }
     var progressText: String { get set }
     var displayTitle: String? { get set }
@@ -23,4 +24,3 @@ protocol CardsQuizModelInterface : ObservableObject{
     func selectOption(_ option: String)
     func showNextCard()
 }
-
