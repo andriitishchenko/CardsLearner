@@ -1,23 +1,30 @@
+# Learn with Cards
 
-# Language Learning App
+Learn with Cards is an iOS SwiftUI app for studying vocabulary with cards and categories. It loads category and card JSON from separate configurable language data URLs, stores downloaded content locally, and supports importing text files through its app extension. See [the architecture overview](DOCS/architecture.md) for the component map.
 
-## Overview
-This is a SwiftUI application designed to help users learn foreign languages using a card-based approach. The app allows users to create and manage language learning resources through a common GitHub repository. Users can input their own language resources and switch between them seamlessly.
+## Project
 
-## Features
-- **Card-Based Learning**: Users can view cards that display words and their translations, helping with memorization and writing.
-- **Customizable Categories**: Users can create and manage categories of words, such as Family, Kitchen, and Travel.
-- **Multiple Language Support**: Users can input URLs for their base language and the language they wish to study.
-- **Progress Tracking**: The app keeps track of user progress and allows for repeated practice.
-- **Offline Access**: Downloaded resources are available offline, including images and JSON files.
+The Xcode project and shared scheme are under `Learner/`. Build settings, dependencies, targets, and test configuration are described in [the architecture overview](DOCS/architecture.md).
 
-## Getting Started
+## Build and test
 
-### Prerequisites
-- Xcode (latest version recommended)
-- Basic knowledge of Swift and SwiftUI
+Use Xcode with the `Learner` scheme in `Learner/Learner.xcodeproj`:
 
-### Cards 
-https://github.com/andriitishchenko/CardsLearnerRepo
+```sh
+xcodebuild -project Learner/Learner.xcodeproj -scheme Learner -destination 'generic/platform=iOS Simulator' build
+```
 
+To run the scheme's tests, select an installed simulator supported by the test targets:
 
+```sh
+xcodebuild -project Learner/Learner.xcodeproj -scheme Learner -destination 'platform=iOS Simulator,name=<installed simulator name>' test
+```
+
+The test command requires an installed simulator and resolved Swift Package Manager dependencies. Current test coverage and test-scheme limitations are tracked in [behavior records](DOCS/behavior/README.md).
+
+## Documentation
+
+- [Architecture](DOCS/architecture.md)
+- [Behavior records and template](DOCS/behavior/README.md)
+- [Architecture decision and constraints](DOCS/decisions/data-boundaries.md)
+- [Agent instructions](AGENTS.md)
