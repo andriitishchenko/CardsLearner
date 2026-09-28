@@ -116,17 +116,17 @@
 - Regression coverage: The generic iOS device build compiles the app and extension for arm64 with iOS 15.0 as their minimum OS. `LearnerUITests.testScreenshots` covers Settings and Imported words navigation in compact width. Quiz behavior and imports have focused unit coverage. No XCTest seam covers OS availability or route view-model retention; runtime navigation still needs an iOS 15 device for direct coverage.
 - Known limitations: Unit-test and UI-test targets still require iOS 17.5, so they do not provide runtime coverage on iOS 15. The regular-width split view and route view-model lifetime have no focused automated coverage.
 
-## BUG-APP-002: Link only available Firebase package products
+## BUG-APP-002: Link only required advertising package products
 - Type: Bug
 - Status: Resolved
-- Scope: The main app's Swift Package Manager product references and Google Mobile Ads API call sites.
-- Observed behavior / Reproduction: Resolving current Firebase packages and building the `Learner` scheme fails when a Firebase package product referenced by the project is no longer published by the resolved SDK. The current Google Mobile Ads SDK rejects legacy Swift names used by the app's banner wrappers and adaptive banner sizing.
-- Goal / Acceptance criteria: The app target links Firebase products that exist in the resolved SDK and uses current Google Mobile Ads APIs while preserving analytics without IDFA collection, version logging, ad startup, width-responsive banner sizing, loading, and delegate handling.
-- Expected behavior and invariants: The project builds against its resolved Firebase and Google Mobile Ads SDKs without missing-product or renamed-API errors; Firebase analytics continues without IDFA collection, Firebase initialization works, and ad presentation remains available.
-- Enforcement boundary: `Learner/Learner.xcodeproj/project.pbxproj` package product dependencies and the Google Mobile Ads call sites in `Learner/Learner/Presentation/Views/`.
-- Current behavior: The project links `FirebaseAnalyticsCore`, App Check, and App Distribution Beta from Firebase 12.19.2. Analytics uses the current Firebase product without IDFA collection. The app initializes Google Mobile Ads 13.10.0 and displays adaptive banners using the current SDK's Swift API names. The resolved package graph builds for the generic iOS Simulator destination.
-- Regression coverage: The documented Xcode build verifies package product resolution and app compilation. No targeted XCTest covers project package-product references or live ad loading.
-- Known limitations: The app imports Firebase Core directly and does not call Firebase Analytics APIs in source; this record does not validate server-side Firebase configuration or runtime ad requests.
+- Scope: The main app's advertising package references and launch setup.
+- Observed behavior / Reproduction: The app project linked Firebase products although no Firebase feature APIs were used. The Google User Messaging Platform package appeared in the lock files but was not declared as a project package or linked product.
+- Goal / Acceptance criteria: The app target links Google Mobile Ads and Google User Messaging Platform, both with up-to-next-major version requirements. Unused Firebase references and initialization are removed while ad version logging, startup, banner sizing, loading, and delegate handling remain.
+- Expected behavior and invariants: The app target has `GoogleMobileAds` and `GoogleUserMessagingPlatform` products from their Google package repositories. The project and resolved package graph contain no Firebase packages. Existing Google Mobile Ads presentation behavior remains available.
+- Enforcement boundary: `Learner/Learner.xcodeproj/project.pbxproj`, the app launch setup in `Learner/Learner/LearnerApp.swift`, and both Xcode SwiftPM lock files.
+- Current behavior: The app target links Google Mobile Ads 13.10.0 and Google User Messaging Platform 2.7.0 with up-to-next-major requirements. Both workspace lock files contain the same two resolved package pins. Firebase package references, products, initialization, and bundled service plist reference are removed.
+- Regression coverage: `xcodebuild -resolvePackageDependencies` resolves the project and workspace package graphs. No targeted XCTest covers project package-product references or live ad loading.
+- Known limitations: This record does not validate live ad requests or consent-form presentation at runtime.
 
 ## FEAT-APP-001: Declare non-exempt encryption usage
 

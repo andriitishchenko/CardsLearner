@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Combine
-import FirebaseCore
 import AppTrackingTransparency
 import AdSupport
 import GoogleMobileAds
@@ -18,7 +17,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         print(
               "Google Mobile Ads SDK version: \(string(for: MobileAds.shared.versionNumber))"
             )
-        FirebaseApp.configure()
         MobileAds.shared.start(completionHandler: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(didReceivedItemDetail),
