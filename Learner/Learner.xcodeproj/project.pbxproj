@@ -33,7 +33,6 @@
 		4A77B1BD2CA75DEF00F89C9F /* CardsQuizModelInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1BC2CA75DEF00F89C9F /* CardsQuizModelInterface.swift */; };
 		4A77B1BF2CA75F1800F89C9F /* CardsQuizInvertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77B1BE2CA75F1800F89C9F /* CardsQuizInvertViewModel.swift */; };
 		4A9C8EBB2CC170F400238D4F /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 4A9C8EBA2CC170F400238D4F /* GoogleMobileAds */; };
-		9F7704B10F114356A0C5B0D1 /* GoogleUserMessagingPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = 9F7704B00F114356A0C5B0D1 /* GoogleUserMessagingPlatform */; };
 		4A9C8EBD2CC1721B00238D4F /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A9C8EBC2CC1721B00238D4F /* Launch Screen.storyboard */; };
 		4AA7B7F52C9B186E001F49D8 /* LearnerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA7B7F42C9B186E001F49D8 /* LearnerApp.swift */; };
 		4AA7B7F72C9B186E001F49D8 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA7B7F62C9B186E001F49D8 /* Persistence.swift */; };
@@ -95,6 +94,7 @@
 		7B1000010000000000000003 /* CategorySidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2000010000000000000003 /* CategorySidebarView.swift */; };
 		7B1000010000000000000004 /* MainScreenContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2000010000000000000004 /* MainScreenContentView.swift */; };
 		7B1000010000000000000005 /* ImportedSetsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2000010000000000000005 /* ImportedSetsScreen.swift */; };
+		9F7704B10F114356A0C5B0D1 /* GoogleUserMessagingPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = 9F7704B00F114356A0C5B0D1 /* GoogleUserMessagingPlatform */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -455,17 +455,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		7B3000010000000000000001 /* Navigation */ = {
-			isa = PBXGroup;
-			children = (
-				7B2000010000000000000001 /* LegacyNavigationContainer.swift */,
-				7B2000010000000000000002 /* ModernNavigationContainer.swift */,
-				7B2000010000000000000003 /* CategorySidebarView.swift */,
-				7B2000010000000000000004 /* MainScreenContentView.swift */,
-			);
-			path = Navigation;
-			sourceTree = "<group>";
-		};
 		4AA7B8312C9B1893001F49D8 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
@@ -669,6 +658,17 @@
 				4AF034DF2CC313A50034CDB2 /* CardsMixedLettersView.swift */,
 			);
 			path = CardsMixedLetters;
+			sourceTree = "<group>";
+		};
+		7B3000010000000000000001 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				7B2000010000000000000001 /* LegacyNavigationContainer.swift */,
+				7B2000010000000000000002 /* ModernNavigationContainer.swift */,
+				7B2000010000000000000003 /* CategorySidebarView.swift */,
+				7B2000010000000000000004 /* MainScreenContentView.swift */,
+			);
+			path = Navigation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -950,19 +950,19 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = LearnerImport/LearnerImport.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = J4NANQ9H36;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LearnerImport/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Import to Learn with Cards";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "@2024";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "@2026";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = at.flashcards.LearnerImport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -978,19 +978,19 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = LearnerImport/LearnerImport.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = J4NANQ9H36;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LearnerImport/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Import to Learn with Cards";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "@2024";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "@2026";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = at.flashcards.LearnerImport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -1132,7 +1132,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Learner/Learner.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Learner/Preview Content\"";
 				DEVELOPMENT_TEAM = J4NANQ9H36;
@@ -1159,7 +1159,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = at.flashcards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -1178,7 +1178,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Learner/Learner.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Learner/Preview Content\"";
 				DEVELOPMENT_TEAM = J4NANQ9H36;
@@ -1205,7 +1205,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = at.flashcards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -1221,10 +1221,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.LearnerTests;
@@ -1243,10 +1243,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.LearnerTests;
@@ -1264,10 +1264,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.LearnerUITests;
@@ -1285,10 +1285,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.LearnerUITests;
