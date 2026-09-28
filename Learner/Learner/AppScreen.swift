@@ -15,6 +15,7 @@ enum AppScreen: Hashable, Equatable {
     case registration
     case profile
     case list
+    case imports
     case detail(category: CategoryModel, selectedInteraction: InteractionType)
     case categoryOption(category: CategoryModel)
     
@@ -27,6 +28,8 @@ enum AppScreen: Hashable, Equatable {
              (.registration, .registration),
              (.profile, .profile),
              (.list, .list):
+            return true
+        case (.imports, .imports):
             return true
         case (.detail(let lhsCategory, let lhsInteraction), .detail(let rhsCategory, let rhsInteraction)):
             return lhsCategory == rhsCategory && lhsInteraction == rhsInteraction
@@ -52,6 +55,8 @@ enum AppScreen: Hashable, Equatable {
             hasher.combine("profile")
         case .list:
             hasher.combine("list")
+        case .imports:
+            hasher.combine("imports")
         case .detail(let category, let selectedInteraction):
             hasher.combine("detail")
             hasher.combine(category)

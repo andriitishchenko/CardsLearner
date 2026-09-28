@@ -13,21 +13,17 @@ final class CardsViewerViewModel: ObservableObject {
     @Published var progressText: String = ""
     @Published var isTranslationBlurred: Bool = false
     @Published var isBaseTitleBlurred: Bool = false
-    @Published var category: CategoryModel?
     @Published var imageURL: URL?
     
     private var totalCards: Int = 0
     private var indexCards: Int = 0
-    private var appIntent: AppIntent
     private var list: [ModelCard]
     
     private var shouldSaySlowly = false
     
     private var voice:Voice
     
-    init(appIntent: AppIntent, category:CategoryModel) {
-        self.appIntent = appIntent
-        self.category = category
+    init(category: CategoryModel) {
         self.totalCards = category.list.count
         voice = Voice(lang: category.list.first?.localCode ?? "en")
         list = category.list.shuffled()
@@ -67,6 +63,12 @@ final class CardsViewerViewModel: ObservableObject {
         } else {
             currentCard = nil
         }
+    }
+
+    func showPreviousCard() {
+        guard indexCards > 0 else { return }
+        indexCards -= 1
+        showCard()
     }
         
     // Toggle the blurred state of the translation

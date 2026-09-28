@@ -39,7 +39,7 @@ class SelectCategoryViewModel: ObservableObject {
 
     
     func selectCategory(category: CategoryModel) {
-        self.appIntent.navigate(to: .categoryOption(category: category))
+        self.appIntent.selectMainCategory(category)
         
     }
     

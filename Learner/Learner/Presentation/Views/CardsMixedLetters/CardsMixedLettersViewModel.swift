@@ -27,16 +27,13 @@ final class CardsMixedLettersViewModel: ObservableObject {
     @Published var longestWordLenght:Int = 0
     @Published var validationStatus:ValidateStatus = .none
     
-    private var appIntent: AppIntent
-    private var category: CategoryModel
     private var originalPhrase: String = ""
     private var voice:Voice
     private var shouldSaySlowly = false
     private var list: [ModelCard]
+    private var advanceTask: Task<Void, Never>?
 
-    init(appIntent: AppIntent, category: CategoryModel) {
-        self.appIntent = appIntent
-        self.category = category
+    init(category: CategoryModel) {
         list = category.list.filter { !$0.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.shuffled()
         self.totalWords = list.count
         self.voice = Voice(lang: category.list.first?.localCode ?? "en")
@@ -45,9 +42,12 @@ final class CardsMixedLettersViewModel: ObservableObject {
     
     func loadNextWord() {
         guard currentWordIndex < totalWords else {
+            currentCard = nil
             isCompleted = true
             return
         }
+
+        isCompleted = false
         
         currentCard = list[currentWordIndex]
         originalPhrase = currentCard?.title.lowercased() ?? ""
@@ -62,6 +62,22 @@ final class CardsMixedLettersViewModel: ObservableObject {
 
         validationStatus = .none
         shouldSaySlowly = false
+    }
+
+    func showNextWord() {
+        guard currentWordIndex < totalWords else { return }
+        advanceTask?.cancel()
+        advanceTask = nil
+        currentWordIndex += 1
+        loadNextWord()
+    }
+
+    func showPreviousWord() {
+        guard currentWordIndex > 0 else { return }
+        advanceTask?.cancel()
+        advanceTask = nil
+        currentWordIndex -= 1
+        loadNextWord()
     }
     
     // Splits a phrase into lines of characters for display
@@ -103,15 +119,16 @@ final class CardsMixedLettersViewModel: ObservableObject {
         
         if selectedPhrase == originalPhrase {
             validationStatus = .valid
-            Task { @MainActor [weak self] in
+            let completedWordIndex = currentWordIndex
+            advanceTask = Task { @MainActor [weak self] in
                 do {
-                    try await Task.sleep(for: .seconds(1))
+                    try await Task.sleep(nanoseconds: 1_000_000_000)
                 } catch {
                     return
                 }
                 guard let self else { return }
-                self.currentWordIndex += 1
-                self.loadNextWord()
+                guard !Task.isCancelled, self.currentWordIndex == completedWordIndex else { return }
+                self.showNextWord()
             }
         } else if selectedPhrase.count == originalPhrase.count {
             validationStatus = .invalid

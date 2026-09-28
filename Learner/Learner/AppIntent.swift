@@ -1,31 +1,119 @@
-import SwiftUI
 import Combine
+import Foundation
 
+struct ImportedWordSet: Codable, Identifiable, Hashable, Sendable {
+    let id: UUID
+    let importedAt: Date
+    let category: CategoryModel
+
+    var preview: String {
+        guard let firstCard = category.list.first else { return "" }
+        return "\(firstCard.title) — \(firstCard.translate)"
+    }
+}
+
+enum StudyReturnDestination: Equatable {
+    case categories
+    case importedSets
+
+    var screen: AppScreen {
+        switch self {
+        case .categories: .home
+        case .importedSets: .imports
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .categories: "Categories"
+        case .importedSets: "Imported words"
+        }
+    }
+}
+
+@MainActor
+final class ImportedWordSetStore {
+    private let userDefaults: UserDefaults
+    private let storageKey = "importedWordSets"
+
+    init(userDefaults: UserDefaults = .standard) {
+        self.userDefaults = userDefaults
+    }
+
+    func load() throws -> [ImportedWordSet] {
+        guard let data = userDefaults.data(forKey: storageKey) else { return [] }
+        return try JSONDecoder().decode([ImportedWordSet].self, from: data)
+            .sorted { $0.importedAt > $1.importedAt }
+    }
+
+    func save(_ wordSet: ImportedWordSet) throws {
+        var wordSets = try load()
+        wordSets.removeAll { $0.id == wordSet.id }
+        wordSets.insert(wordSet, at: 0)
+        userDefaults.set(try JSONEncoder().encode(wordSets), forKey: storageKey)
+    }
+
+    func delete(id: UUID) throws {
+        var wordSets = try load()
+        wordSets.removeAll { $0.id == id }
+        userDefaults.set(try JSONEncoder().encode(wordSets), forKey: storageKey)
+    }
+}
+
+struct SharedImportRequestStore {
+    private let userDefaults: UserDefaults
+    private let storageKey = "IMPORT_PATH"
+
+    init(userDefaults: UserDefaults = UserDefaults(suiteName: "group.at.flashcards") ?? .standard) {
+        self.userDefaults = userDefaults
+    }
+
+    func takePendingURL() -> URL? {
+        guard let path = userDefaults.string(forKey: storageKey) else { return nil }
+        userDefaults.removeObject(forKey: storageKey)
+        return URL(string: path)
+    }
+}
 
 protocol Intent: ObservableObject{}
 
 @MainActor
 class AppIntent: Intent {
-    @Published var navigationPath = NavigationPath()
+    @Published var navigationPath: [AppScreen] = []
     @Published var errorMessage: String?
     @Published var list:[CategoryModel] = []
+    @Published private(set) var importedWordSets: [ImportedWordSet] = []
     @Published var currentScreen: AppScreen = .home
     @Published var isLoading = false
+    private(set) var studyReturnDestination: StudyReturnDestination = .categories
+
+    var navigationReturnDestination: StudyReturnDestination {
+        currentScreen == .imports ? .categories : studyReturnDestination
+    }
         
     let userSettings:UserSettingsUseCase
     let localDatasource: LocalDataSource
     let remoteDatasource: RemoteDataSource
+    private let importedWordSetStore: ImportedWordSetStore
 
-    init(navigationPath: NavigationPath = NavigationPath(),
+    init(navigationPath: [AppScreen] = [],
          errorMessage: String? = nil,
          localDatasource: LocalDataSource,
-         remoteDatasource: RemoteDataSource) {
+         remoteDatasource: RemoteDataSource,
+         importedWordSetStore: ImportedWordSetStore = ImportedWordSetStore()) {
         
         self.navigationPath = navigationPath
         self.errorMessage = errorMessage
         
         self.localDatasource = localDatasource
         self.remoteDatasource = remoteDatasource
+        self.importedWordSetStore = importedWordSetStore
+
+        do {
+            self.importedWordSets = try importedWordSetStore.load()
+        } catch {
+            self.errorMessage = "Unable to load imported word sets: \(error.localizedDescription)"
+        }
                 
         let userDefaultsReposit = UserDefaultsRepositoryImpl()
         self.userSettings = UserSettingsUseCaseImpl(userDefaultsRepository: userDefaultsReposit)
@@ -50,9 +138,6 @@ class AppIntent: Intent {
                 print("Fetch")
                 await self.fetchData()
                 await self.loadLocalData()
-            }
-            else{
-                self.navigate(to: .list)
             }
         }
         isLoading = false
@@ -143,10 +228,17 @@ class AppIntent: Intent {
     func navigateBack() {
         guard !navigationPath.isEmpty else { return }
         navigationPath.removeLast()
+        currentScreen = navigationPath.last ?? .home
     }
-    
+
+    func selectMainCategory(_ category: CategoryModel) {
+        studyReturnDestination = .categories
+        navigate(to: .categoryOption(category: category))
+    }
+
     func clearNavigation() {
-        navigationPath = NavigationPath()
+        navigationPath.removeAll()
+        currentScreen = navigationReturnDestination.screen
     }
         
     func handleImport(file: URL){
@@ -160,42 +252,101 @@ class AppIntent: Intent {
             return
         }
 
+        guard file.isFileURL else { return }
         handleImportContents(file: file, language: strLang)
     }
 
     private func handleImportContents(file: URL, language strLang: String) {
         isLoading = true
-        if let pairs = parseFileToWordPairs(file: file), !pairs.isEmpty {
-            self.list.removeAll(where: { $0.id == 1000 } )
-            var list: [ModelCard] = []
-            var int = 0
-            for pair in pairs {
-                
-                let latinString = pair.0.lowercased().applyingTransform(StringTransform.toLatin, reverse: false) // contains š,.. etc
-                let noDiacriticString = latinString?.applyingTransform(StringTransform.stripDiacritics, reverse: false) ?? "" // convert š => s
-                int += 1
-                let card = ModelCard(id: 1000 + int,
-                                     categoryId: 1000,
-                                     title: pair.0,
-                                     translate: pair.1,
-                                     localCode: strLang,
-                                     picture: nil,
-// TODO:                                        "https://loremflickr.com/640/480/\(pair.0)",
-                                     voice: nil,
-                                     transcription:"[\(noDiacriticString)]")
-                list.append(card)
-            }
-            
-            var picURL:String = ""
-            if let imageURL = Bundle.main.url(forResource: "notes", withExtension: "png") {
-                picURL = imageURL.absoluteString
-            }
-            
-            let cm = CategoryModel(id: 1000, title: "Imported", picture: picURL, order: 0, list: list)
-            self.list.append(cm)
-        } else {
+        guard let pairs = parseFileToWordPairs(file: file), !pairs.isEmpty else {
             errorMessage = "The selected file contains no valid word pairs."
+            isLoading = false
+            return
         }
+
+        saveImportedWordSet(pairs: pairs, language: strLang)
         isLoading = false
+    }
+
+    func importFromURL(_ address: String) async {
+        isLoading = true
+        defer { isLoading = false }
+
+        guard let url = URL(string: address.trimmingCharacters(in: .whitespacesAndNewlines)),
+              ["http", "https"].contains(url.scheme?.lowercased() ?? "") else {
+            errorMessage = "Enter a valid http or https URL."
+            return
+        }
+
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            guard let response = response as? HTTPURLResponse,
+                  (200..<300).contains(response.statusCode),
+                  let text = String(data: data, encoding: .utf8) else {
+                errorMessage = "The URL did not return readable text."
+                return
+            }
+            importText(text)
+        } catch {
+            errorMessage = "Unable to import from this URL: \(error.localizedDescription)"
+        }
+    }
+
+    func importText(_ text: String) {
+        let pairs = WordPairParser.parse(text)
+        guard !pairs.isEmpty else {
+            errorMessage = "No valid word pairs were found."
+            return
+        }
+        let language = list.lazy.compactMap { $0.list.first?.localCode }.first ?? "en"
+        saveImportedWordSet(pairs: pairs, language: language)
+    }
+
+    func selectImportedWordSet(_ wordSet: ImportedWordSet) {
+        studyReturnDestination = .importedSets
+        navigate(to: .categoryOption(category: wordSet.category))
+    }
+
+    func deleteImportedWordSet(_ wordSet: ImportedWordSet) {
+        do {
+            try importedWordSetStore.delete(id: wordSet.id)
+            importedWordSets.removeAll { $0.id == wordSet.id }
+        } catch {
+            errorMessage = "Unable to delete imported word set: \(error.localizedDescription)"
+        }
+    }
+
+    private func saveImportedWordSet(pairs: [(String, String)], language: String) {
+        var cards: [ModelCard] = []
+        let categoryID = Self.uniqueCategoryID()
+        for (index, pair) in pairs.enumerated() {
+            let latinString = pair.0.lowercased().applyingTransform(StringTransform.toLatin, reverse: false)
+            let noDiacriticString = latinString?.applyingTransform(StringTransform.stripDiacritics, reverse: false) ?? ""
+            cards.append(ModelCard(id: index + 1,
+                                   categoryId: categoryID,
+                                   title: pair.0,
+                                   translate: pair.1,
+                                   localCode: language,
+                                   picture: nil,
+                                   voice: nil,
+                                   transcription: "[\(noDiacriticString)]"))
+        }
+
+        let pictureURL = Bundle.main.url(forResource: "notes", withExtension: "png")?.absoluteString ?? ""
+        let category = CategoryModel(id: categoryID, title: "Imported words", picture: pictureURL, order: 0, list: cards)
+        let wordSet = ImportedWordSet(id: UUID(), importedAt: Date(), category: category)
+        do {
+            try importedWordSetStore.save(wordSet)
+            importedWordSets.insert(wordSet, at: 0)
+            errorMessage = nil
+        } catch {
+            errorMessage = "Unable to save imported word pairs: \(error.localizedDescription)"
+        }
+    }
+
+    private static func uniqueCategoryID() -> Int {
+        let uuidPrefix = String(UUID().uuidString.prefix(8))
+        let randomPart = Int(uuidPrefix, radix: 16) ?? 0
+        return 1_000_000_000 + randomPart % 1_000_000_000
     }
 }

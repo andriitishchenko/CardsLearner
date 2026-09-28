@@ -132,7 +132,7 @@ final class SelectLanguageViewModel: ObservableObject {
         clearMessageTask?.cancel()
         clearMessageTask = Task { @MainActor [weak self] in
             do {
-                try await Task.sleep(for: .seconds(3))
+                try await Task.sleep(nanoseconds: 3_000_000_000)
             } catch {
                 return
             }

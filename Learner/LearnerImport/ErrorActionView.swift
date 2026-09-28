@@ -1,41 +1,35 @@
-//
-//  ErrorActionView.swift
-//  LearnerImport
-//
-//  Created by Andrii Tishchenko on 2024-10-26.
-//
-
 import SwiftUI
 
 struct ErrorActionView: View {
     var errorMessage: String
     var onClose: () -> Void
-    
+
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Error")
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 32))
+                .foregroundColor(.orange)
+
+            Text("Unable to import")
                 .font(.headline)
-                .foregroundColor(.red)
-            
+
             Text(errorMessage)
-//                .font(.body)
+                .font(.body)
                 .multilineTextAlignment(.center)
-                .padding()
-            
+                .foregroundColor(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
             Button(action: onClose) {
                 Text("Close")
-                    .font(.body)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.red)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, minHeight: 44)
             }
-            .padding(.horizontal, 16)
+            .buttonStyle(.borderedProminent)
         }
-        .padding()
-        .cornerRadius(16)
-        .shadow(radius: 10)
-        .frame(width: UIScreen.main.bounds.width * 0.8, height: 200)
+        .padding(24)
+        .frame(maxWidth: 420)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .shadow(color: .black.opacity(0.12), radius: 16, y: 6)
     }
 }

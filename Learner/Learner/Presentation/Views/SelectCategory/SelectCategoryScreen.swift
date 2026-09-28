@@ -34,15 +34,16 @@ struct SelectCategoryScreen: View {
         List(selection: $currentSelected){}.frame(height: 0) //workaround to have custom menu
         VStack {
             LazyVGrid(columns: columnsForMenu(screenWidth: self.width), spacing: 16) {
-                    ForEach(viewModel.categories, id: \.id) { category in
-                        Button(action: {
-                            currentSelected = category
-                            viewModel.selectCategory(category: category)
-                        }) {
-                            CategoryGridItemView(category: category)
-                        }
+                ForEach(viewModel.categories, id: \.id) { category in
+                    Button {
+                        currentSelected = category
+                        viewModel.selectCategory(category: category)
+                    } label: {
+                        CategoryGridItemView(category: category)
                     }
+                    .buttonStyle(.plain)
                 }
+            }
         }
         .padding(.horizontal, 16)
         .background(

@@ -1,6 +1,6 @@
 # Learn with Cards
 
-Learn with Cards is an iOS SwiftUI app for studying vocabulary with cards and categories. It loads category and card JSON from separate configurable language data URLs, stores downloaded content locally, and supports importing text files through its app extension. See [the architecture overview](DOCS/architecture.md) for the component map.
+Learn with Cards is an iOS SwiftUI app for studying vocabulary with cards and categories. It loads category and card JSON from separate configurable language data URLs, stores downloaded content locally, and keeps imported word sets across app launches. Word sets can be imported from a text file, URL, pasted text, or the iOS Share extension. See [the architecture overview](DOCS/architecture.md) for the component map.
 
 ## Project
 

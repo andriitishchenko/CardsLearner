@@ -106,7 +106,12 @@ struct LearnerApp: App {
                 isLoading = val
             }
             .onOpenURL { url in
-                self.appIntent.handleImport(file: url)
+                if url.scheme == "lrnwcards",
+                   getQueryStringParameter(url: url.absoluteString, param: "importFile") == nil {
+                    checkForImport()
+                } else {
+                    self.appIntent.handleImport(file: url)
+                }
             }
             .onChange(of: scenePhase) { newPhase  in
                 if newPhase == .active {
@@ -120,10 +125,7 @@ struct LearnerApp: App {
 
 extension LearnerApp{
     func checkForImport(){
-        let sharedDefaults = UserDefaults(suiteName: "group.at.flashcards")
-        if let urlPath = sharedDefaults?.string(forKey: "IMPORT_PATH"),
-           let url = URL(string: urlPath) {
-            sharedDefaults?.removeObject(forKey: "IMPORT_PATH")
+        if let url = SharedImportRequestStore().takePendingURL() {
             self.appIntent.handleImport(file: url)
         }
     }

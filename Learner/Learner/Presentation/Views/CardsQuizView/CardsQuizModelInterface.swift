@@ -23,4 +23,5 @@ protocol CardsQuizModelInterface: ObservableObject {
     func showCard()
     func selectOption(_ option: String)
     func showNextCard()
+    func showPreviousCard()
 }

@@ -1,65 +1,62 @@
-//
-//  ActionView.swift
-//  LearnerImport
-//
-//  Created by Andrii Tishchenko on 2024-10-25.
-//
 import SwiftUI
 
 struct ActionView: View {
-    var wordPairs: [(String, String)] // Array of tuples to hold word pairs
+    var wordPairs: [(String, String)]
     var onContinue: () -> Void
-    
+
     var body: some View {
-        VStack {
-            // App Icon
-            Image("AppIcon") // Ensure you have an image named "AppIcon" in your assets
+        VStack(spacing: 0) {
+            Image("AppIcon")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 100, height: 100)
-                .cornerRadius(10)
-                .padding(.top, -50)
-                
+                .frame(width: 64, height: 64)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .padding(.top, 20)
+                .padding(.bottom, 12)
 
-            // Displaying text in two columns
-            ScrollView{
-                HStack {
-                    VStack(alignment: .trailing) {
-                        ForEach(Array(wordPairs.enumerated()), id: \.offset) { entry in
-                            Text(entry.element.0)
-                                .padding(5)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
+            Text("Review imported words")
+                .font(.headline)
+                .padding(.bottom, 16)
 
-                    Divider()
-                        .frame(width: 1)
-                        .background(Color.gray)
-
-                    VStack(alignment: .leading) {
-                        ForEach(Array(wordPairs.enumerated()), id: \.offset) { entry in
-                            Text(entry.element.1)
-                                .padding(5)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-                .padding()
+            HStack {
+                Text("Word")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text("Translation")
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-            Spacer()
-            
-            // Continue Button
-            Button(action: {
-                onContinue()
-            }) {
+            .font(.caption.weight(.semibold))
+            .foregroundColor(.secondary)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 10)
+
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(Array(wordPairs.enumerated()), id: \.offset) { entry in
+                        HStack(alignment: .top, spacing: 16) {
+                            Text(entry.element.0)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text(entry.element.1)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .font(.body)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(entry.offset.isMultiple(of: 2) ? Color(.secondarySystemBackground) : Color.clear)
+                    }
+                }
+            }
+
+            Button(action: onContinue) {
                 Text("Continue")
                     .font(.headline)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .frame(maxWidth: .infinity, minHeight: 50)
             }
+            .buttonStyle(.borderedProminent)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemBackground))
     }
 }

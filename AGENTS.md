@@ -1,5 +1,12 @@
 # Agent instructions
 
+## Task branches and commits
+
+- Before editing, check the current Git branch. If it is `master`, create a new task-specific branch with the `codex/` prefix. If it is any other branch, continue working on that branch without creating or switching branches.
+- When the task is complete, review the diff and automatically commit all changes made for that task. Use a concise commit message that describes the work.
+- Commit only changes belonging to the current task. Preserve pre-existing or unrelated user changes, and never commit secrets, credentials, or user data.
+- Do not merge changes into `master` unless the user explicitly asks for the merge. The user handles merges by default.
+
 ## Before making changes
 
 - Read this file, `README.md`, relevant documentation, the source and configuration related to the task, and `git status` before editing.

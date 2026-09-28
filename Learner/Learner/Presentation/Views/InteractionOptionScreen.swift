@@ -13,16 +13,20 @@ struct InteractionOptionScreen: View {
     let onOptionSelected: (InteractionType) -> Void
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             Text("How do you want to interact with cards?")
-                .font(.title2)
-                .padding()
+                .font(.title2.weight(.semibold))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 12)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
 
             Button(action: {
                 onOptionSelected(.viewer)
             }) {
                 Label("Card Viewer", systemImage: "photo")
-                    .frame(minWidth: 200, minHeight: 44)
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, minHeight: 52)
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
@@ -32,7 +36,8 @@ struct InteractionOptionScreen: View {
                 onOptionSelected(.quiz)
             }) {
                 Label("Quiz Mode", systemImage: "questionmark.circle")
-                    .frame(minWidth: 200, minHeight: 44)
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, minHeight: 52)
                     .background(Color.green)
                     .foregroundColor(.white)
                     .cornerRadius(10)
@@ -42,7 +47,8 @@ struct InteractionOptionScreen: View {
                 onOptionSelected(.quizInvert)
             }) {
                 Label("Quiz Inverted", systemImage: "arrow.uturn.left.circle")
-                    .frame(minWidth: 200, minHeight: 44)
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, minHeight: 52)
                     .background(Color.orange)
                     .foregroundColor(.white)
                     .cornerRadius(10)
@@ -52,7 +58,8 @@ struct InteractionOptionScreen: View {
                 onOptionSelected(.mixedLetters)
             }) {
                 Label("Mixed letters", systemImage: "arrow.left.arrow.right")
-                    .frame(minWidth: 200, minHeight: 44)
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, minHeight: 52)
                     .background(Color(
                         red: 1,
                         green: 0.55,
@@ -64,12 +71,13 @@ struct InteractionOptionScreen: View {
             GeometryReader { geometry in
                 let adSize = largeAnchoredAdaptiveBanner(width: geometry.size.width)
                 VStack {
-                      Spacer()
-                        BannerViewAd(adSize)
+                    Spacer(minLength: 12)
+                    BannerViewAd(adSize)
                         .frame(height: adSize.size.height)
-                    }
+                }
             }
         }
-        .padding()
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
     }
 }
