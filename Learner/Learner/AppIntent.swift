@@ -5,10 +5,18 @@ struct ImportedWordSet: Codable, Identifiable, Hashable, Sendable {
     let id: UUID
     let importedAt: Date
     let category: CategoryModel
+    var name: String? = nil
 
     var preview: String {
         guard let firstCard = category.list.first else { return "" }
         return "\(firstCard.title) — \(firstCard.translate)"
+    }
+
+    var displayName: String {
+        guard let name = name?.trimmingCharacters(in: .whitespacesAndNewlines), !name.isEmpty else {
+            return preview
+        }
+        return name
     }
 }
 
@@ -56,6 +64,17 @@ final class ImportedWordSetStore {
     func delete(id: UUID) throws {
         var wordSets = try load()
         wordSets.removeAll { $0.id == id }
+        userDefaults.set(try JSONEncoder().encode(wordSets), forKey: storageKey)
+    }
+
+    func rename(id: UUID, to name: String) throws {
+        var wordSets = try load()
+        guard let index = wordSets.firstIndex(where: { $0.id == id }) else { return }
+
+        var wordSet = wordSets[index]
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        wordSet.name = trimmedName.isEmpty ? nil : trimmedName
+        wordSets[index] = wordSet
         userDefaults.set(try JSONEncoder().encode(wordSets), forKey: storageKey)
     }
 }
@@ -313,6 +332,21 @@ class AppIntent: Intent {
             importedWordSets.removeAll { $0.id == wordSet.id }
         } catch {
             errorMessage = "Unable to delete imported word set: \(error.localizedDescription)"
+        }
+    }
+
+    func renameImportedWordSet(_ wordSet: ImportedWordSet, to name: String) {
+        do {
+            try importedWordSetStore.rename(id: wordSet.id, to: name)
+            guard let index = importedWordSets.firstIndex(where: { $0.id == wordSet.id }) else { return }
+
+            var renamedWordSet = importedWordSets[index]
+            let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            renamedWordSet.name = trimmedName.isEmpty ? nil : trimmedName
+            importedWordSets[index] = renamedWordSet
+            errorMessage = nil
+        } catch {
+            errorMessage = "Unable to rename imported word set: \(error.localizedDescription)"
         }
     }
 

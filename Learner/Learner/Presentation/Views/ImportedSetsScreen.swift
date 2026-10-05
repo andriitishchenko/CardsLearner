@@ -6,6 +6,9 @@ struct ImportedSetsScreen: View {
     @ObservedObject var appIntent: AppIntent
     @State private var isImportingFile = false
     @State private var activeSheet: ImportSheet?
+    @State private var isRenamingWordSet = false
+    @State private var wordSetToRename: ImportedWordSet?
+    @State private var renameText = ""
 
     var body: some View {
         Group {
@@ -30,10 +33,10 @@ struct ImportedSetsScreen: View {
                             appIntent.selectImportedWordSet(wordSet)
                         } label: {
                             VStack(alignment: .leading, spacing: 5) {
-                                Text(wordSet.importedAt.formatted(date: .abbreviated, time: .shortened))
+                                Text(wordSet.displayName)
                                     .font(.headline)
                                     .foregroundStyle(.primary)
-                                Text(wordSet.preview)
+                                Text(wordSet.importedAt.formatted(date: .abbreviated, time: .shortened))
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
                                     .lineLimit(1)
@@ -46,14 +49,51 @@ struct ImportedSetsScreen: View {
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                    }
-                    .onDelete { offsets in
-                        for index in offsets.sorted(by: >) {
-                            appIntent.deleteImportedWordSet(appIntent.importedWordSets[index])
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button {
+                                wordSetToRename = wordSet
+                                renameText = wordSet.name ?? wordSet.preview
+                                isRenamingWordSet = true
+                            } label: {
+                                Label("Rename", systemImage: "pencil")
+                            }
+                            .tint(.blue)
+
+                            Button(role: .destructive) {
+                                appIntent.deleteImportedWordSet(wordSet)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
                         }
                     }
                 }
                 .listStyle(.insetGrouped)
+                .sheet(isPresented: $isRenamingWordSet) {
+                    NavigationView {
+                        Form {
+                            TextField("Name", text: $renameText)
+                        }
+                        .navigationTitle("Rename imported set")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Cancel") {
+                                    wordSetToRename = nil
+                                    isRenamingWordSet = false
+                                }
+                            }
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Save") {
+                                    if let wordSetToRename {
+                                        appIntent.renameImportedWordSet(wordSetToRename, to: renameText)
+                                    }
+                                    wordSetToRename = nil
+                                    isRenamingWordSet = false
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         .navigationTitle("Imported words")

@@ -1,5 +1,12 @@
 import SwiftUI
 
+struct QuizIncorrectAnswer: Identifiable, Equatable {
+    let id = UUID()
+    let question: String
+    let selectedAnswer: String
+    let correctAnswer: String
+}
+
 @MainActor
 class CardsQuizViewModelBase: CardsQuizModelInterface {
     @Published var scoreTitle: String? = ""
@@ -9,6 +16,7 @@ class CardsQuizViewModelBase: CardsQuizModelInterface {
     @Published var progressText = ""
     @Published var options: [String] = []
     @Published var selectedOption: String?
+    @Published var incorrectAnswers: [QuizIncorrectAnswer] = []
     @Published var isNextButtonDisabled = false
     @Published var isCorrect = false
 
@@ -79,6 +87,11 @@ class CardsQuizViewModelBase: CardsQuizModelInterface {
         } else {
             isLoading = false
             invalidAnswers += 1
+            incorrectAnswers.append(QuizIncorrectAnswer(
+                question: questionText(currentCard),
+                selectedAnswer: option,
+                correctAnswer: correctAnswer(currentCard)
+            ))
         }
     }
 

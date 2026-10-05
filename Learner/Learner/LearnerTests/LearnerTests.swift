@@ -9,6 +9,7 @@ final class LearnerTests: XCTestCase {
         XCTAssertTrue(emptyQuiz.isCompleted)
         XCTAssertEqual(emptyQuiz.scoreTitle, "Fails: 0")
         XCTAssertEqual(emptyQuiz.progressText, "0 of 0")
+        XCTAssertTrue(emptyQuiz.incorrectAnswers.isEmpty)
 
         let quiz = CardsQuizViewModel(category: category(cards: cards()))
         guard let card = quiz.currentCard else {
@@ -25,20 +26,34 @@ final class LearnerTests: XCTestCase {
         quiz.selectOption(incorrect)
         XCTAssertEqual(quiz.currentCard?.id, card.id)
         XCTAssertFalse(quiz.isCorrect)
+        XCTAssertEqual(quiz.incorrectAnswers.count, 1)
+        XCTAssertEqual(quiz.incorrectAnswers[0].question, card.title)
+        XCTAssertEqual(quiz.incorrectAnswers[0].selectedAnswer, incorrect)
+        XCTAssertEqual(quiz.incorrectAnswers[0].correctAnswer, card.translate)
 
         quiz.selectOption("not an available option")
         XCTAssertEqual(quiz.selectedOption, incorrect)
+        XCTAssertEqual(quiz.incorrectAnswers.count, 1)
+
+        guard let secondIncorrect = quiz.options.first(where: { $0 != card.translate && $0 != incorrect }) else {
+            XCTFail("Expected a second incorrect answer option")
+            return
+        }
+        quiz.selectOption(secondIncorrect)
+        XCTAssertEqual(quiz.incorrectAnswers.count, 2)
+        XCTAssertEqual(quiz.incorrectAnswers[1].selectedAnswer, secondIncorrect)
 
         quiz.selectOption(card.translate)
         XCTAssertTrue(quiz.isCorrect)
-        try await Task.sleep(for: .seconds(2.1))
+        try await Task.sleep(nanoseconds: 2_100_000_000)
         XCTAssertEqual(quiz.progressText, "2 of 3")
         XCTAssertFalse(quiz.isCompleted)
 
         quiz.showNextCard()
         quiz.showNextCard()
         XCTAssertTrue(quiz.isCompleted)
-        XCTAssertEqual(quiz.scoreTitle, "Fails: 1")
+        XCTAssertEqual(quiz.scoreTitle, "Fails: 2")
+        XCTAssertEqual(quiz.incorrectAnswers.count, 2)
     }
 
     func testReverseQuizBehavior() async throws {
@@ -46,6 +61,7 @@ final class LearnerTests: XCTestCase {
         XCTAssertTrue(emptyQuiz.isCompleted)
         XCTAssertEqual(emptyQuiz.scoreTitle, "Fails: 0")
         XCTAssertEqual(emptyQuiz.progressText, "0 of 0")
+        XCTAssertTrue(emptyQuiz.incorrectAnswers.isEmpty)
 
         let quiz = CardsQuizInvertViewModel(category: category(cards: cards()))
         guard let card = quiz.currentCard else {
@@ -62,20 +78,34 @@ final class LearnerTests: XCTestCase {
         quiz.selectOption(incorrect)
         XCTAssertEqual(quiz.currentCard?.id, card.id)
         XCTAssertFalse(quiz.isCorrect)
+        XCTAssertEqual(quiz.incorrectAnswers.count, 1)
+        XCTAssertEqual(quiz.incorrectAnswers[0].question, card.translate)
+        XCTAssertEqual(quiz.incorrectAnswers[0].selectedAnswer, incorrect)
+        XCTAssertEqual(quiz.incorrectAnswers[0].correctAnswer, card.title)
 
         quiz.selectOption("not an available option")
         XCTAssertEqual(quiz.selectedOption, incorrect)
+        XCTAssertEqual(quiz.incorrectAnswers.count, 1)
+
+        guard let secondIncorrect = quiz.options.first(where: { $0 != card.title && $0 != incorrect }) else {
+            XCTFail("Expected a second incorrect answer option")
+            return
+        }
+        quiz.selectOption(secondIncorrect)
+        XCTAssertEqual(quiz.incorrectAnswers.count, 2)
+        XCTAssertEqual(quiz.incorrectAnswers[1].selectedAnswer, secondIncorrect)
 
         quiz.selectOption(card.title)
         XCTAssertTrue(quiz.isCorrect)
-        try await Task.sleep(for: .seconds(2.1))
+        try await Task.sleep(nanoseconds: 2_100_000_000)
         XCTAssertEqual(quiz.progressText, "2 of 3")
         XCTAssertFalse(quiz.isCompleted)
 
         quiz.showNextCard()
         quiz.showNextCard()
         XCTAssertTrue(quiz.isCompleted)
-        XCTAssertEqual(quiz.scoreTitle, "Fails: 1")
+        XCTAssertEqual(quiz.scoreTitle, "Fails: 2")
+        XCTAssertEqual(quiz.incorrectAnswers.count, 2)
     }
 
     func testQuizCanReturnToThePreviousCard() {
@@ -177,6 +207,49 @@ final class LearnerTests: XCTestCase {
         XCTAssertEqual(reloadedSets[0].category.list.first?.title, "new")
         XCTAssertEqual(reloadedSets[0].category.list.first?.translate, "новый")
         XCTAssertEqual(reloadedSets[0].preview, "new — новый")
+        XCTAssertEqual(reloadedSets[0].displayName, "new — новый")
+        XCTAssertNil(reloadedSets[0].name)
+    }
+
+    func testImportedWordSetCanBeRenamedAndRestoredToItsDefaultName() throws {
+        let suiteName = "ImportedWordSetRenameTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let original = importedSet(date: Date(timeIntervalSince1970: 300), word: "hello", translation: "привет")
+        let store = ImportedWordSetStore(userDefaults: defaults)
+        try store.save(original)
+
+        try store.rename(id: original.id, to: "  Travel words  ")
+
+        var savedSet = try XCTUnwrap(store.load().first)
+        XCTAssertEqual(savedSet.name, "Travel words")
+        XCTAssertEqual(savedSet.displayName, "Travel words")
+        XCTAssertEqual(savedSet.importedAt, original.importedAt)
+        XCTAssertEqual(savedSet.category.list, original.category.list)
+
+        try store.rename(id: original.id, to: " \n  ")
+        savedSet = try XCTUnwrap(ImportedWordSetStore(userDefaults: defaults).load().first)
+        XCTAssertNil(savedSet.name)
+        XCTAssertEqual(savedSet.displayName, "hello — привет")
+        XCTAssertEqual(savedSet.category.list, original.category.list)
+    }
+
+    func testImportedWordSetsSavedBeforeNamesWereAddedStillLoad() throws {
+        let suiteName = "LegacyImportedWordSetTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let legacySet = importedSet(date: Date(timeIntervalSince1970: 400), word: "book", translation: "книга")
+        let legacyData = try JSONEncoder().encode([
+            LegacyImportedWordSetFixture(id: legacySet.id, importedAt: legacySet.importedAt, category: legacySet.category)
+        ])
+        defaults.set(legacyData, forKey: "importedWordSets")
+
+        let loadedSet = try XCTUnwrap(ImportedWordSetStore(userDefaults: defaults).load().first)
+        XCTAssertNil(loadedSet.name)
+        XCTAssertEqual(loadedSet.displayName, "book — книга")
+        XCTAssertEqual(loadedSet.category.list, legacySet.category.list)
     }
 
     func testImportedWordSetCanBeDeleted() throws {
@@ -239,4 +312,10 @@ final class LearnerTests: XCTestCase {
         return ImportedWordSet(id: UUID(), importedAt: date, category: category)
     }
 
+}
+
+private struct LegacyImportedWordSetFixture: Encodable {
+    let id: UUID
+    let importedAt: Date
+    let category: CategoryModel
 }

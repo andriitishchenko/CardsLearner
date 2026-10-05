@@ -17,6 +17,7 @@ protocol CardsQuizModelInterface: ObservableObject {
     var isNextButtonDisabled: Bool { get set }
     var isCorrect: Bool { get set }
     var isCompleted: Bool { get set }
+    var incorrectAnswers: [QuizIncorrectAnswer] { get set }
     
     var scoreTitle: String? { get set }
     

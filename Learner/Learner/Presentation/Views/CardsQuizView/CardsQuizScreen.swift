@@ -21,6 +21,35 @@ struct CardsQuizScreen<ViewModel: CardsQuizModelInterface>: View {
                     .padding(28)
                     .background(Color(.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+
+                    if !viewModel.incorrectAnswers.isEmpty {
+                        VStack(alignment: .leading, spacing: 14) {
+                            Text("Review incorrect answers")
+                                .font(.headline)
+
+                            LazyVStack(alignment: .leading, spacing: 14) {
+                                ForEach(Array(viewModel.incorrectAnswers.enumerated()), id: \.element.id) { index, answer in
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        Text("\(index + 1). \(answer.question)")
+                                            .font(.body.weight(.semibold))
+                                        Text("Your answer: \(answer.selectedAnswer)")
+                                            .foregroundColor(.red)
+                                        Text("Correct answer: \(answer.correctAnswer)")
+                                            .foregroundColor(.green)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                                    if index < viewModel.incorrectAnswers.count - 1 {
+                                        Divider()
+                                    }
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(20)
+                        .background(Color(.secondarySystemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    }
                 } else if let title = viewModel.displayTitle {
                     VStack(spacing: 12) {
                         Text("Translate")
