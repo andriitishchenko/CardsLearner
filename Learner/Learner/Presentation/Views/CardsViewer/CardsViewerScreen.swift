@@ -3,13 +3,6 @@ import SwiftUI
 struct CardsViewerScreen: View {
     @ObservedObject var viewModel: CardsViewerViewModel
 
-    private var imageName: String {
-        if #available(iOS 18.0, *) {
-            return "photo.badge.exclamationmark.fill.circle"
-        }
-        return "photo"
-    }
-
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -38,7 +31,7 @@ struct CardsViewerScreen: View {
                                 .frame(maxWidth: .infinity, maxHeight: 280)
                         } else {
                             VStack(spacing: 8) {
-                                Image(systemName: imageName)
+                                Image(systemName: "photo")
                                     .font(.system(size: 38))
                                 Text("No image")
                                     .font(.subheadline)

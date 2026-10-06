@@ -50,10 +50,10 @@ struct SelectCategoryScreen: View {
             GeometryReader { proxy in
                 Color.clear
                     .onAppear {
-                        self.width = proxy.size.width
+                        updateWidth(proxy.size.width)
                     }
-                    .onChange(of: proxy.size) { newSize in
-                        self.width = proxy.size.width
+                    .onChange(of: proxy.size.width) { newWidth in
+                        updateWidth(newWidth)
                     }
             }
         )
@@ -73,6 +73,11 @@ struct SelectCategoryScreen: View {
         } else if UIDevice.current.orientation.isPortrait {
             isLandscape = false
         }
+    }
+
+    private func updateWidth(_ newWidth: CGFloat) {
+        guard abs(width - newWidth) > 0.5 else { return }
+        width = newWidth
     }
 }
 

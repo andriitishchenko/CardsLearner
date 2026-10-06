@@ -64,8 +64,9 @@ final class LearnerTests: XCTestCase {
             return
         }
         quiz.selectOption(secondIncorrect)
-        XCTAssertEqual(quiz.incorrectAnswers.count, 2)
-        XCTAssertEqual(quiz.incorrectAnswers[1].correctAnswer, card.translate)
+        XCTAssertEqual(quiz.incorrectAnswers.count, 1)
+        XCTAssertEqual(quiz.incorrectAnswers.map(\.question), [card.title])
+        XCTAssertEqual(quiz.incorrectAnswers[0].correctAnswer, card.translate)
 
         quiz.selectOption(card.translate)
         XCTAssertTrue(quiz.isCorrect)
@@ -77,7 +78,7 @@ final class LearnerTests: XCTestCase {
         quiz.showNextCard()
         XCTAssertTrue(quiz.isCompleted)
         XCTAssertEqual(quiz.scoreTitle, "Fails: 2")
-        XCTAssertEqual(quiz.incorrectAnswers.count, 2)
+        XCTAssertEqual(quiz.incorrectAnswers.count, 1)
     }
 
     func testReverseQuizBehavior() async throws {
@@ -115,8 +116,9 @@ final class LearnerTests: XCTestCase {
             return
         }
         quiz.selectOption(secondIncorrect)
-        XCTAssertEqual(quiz.incorrectAnswers.count, 2)
-        XCTAssertEqual(quiz.incorrectAnswers[1].correctAnswer, card.title)
+        XCTAssertEqual(quiz.incorrectAnswers.count, 1)
+        XCTAssertEqual(quiz.incorrectAnswers.map(\.question), [card.translate])
+        XCTAssertEqual(quiz.incorrectAnswers[0].correctAnswer, card.title)
 
         quiz.selectOption(card.title)
         XCTAssertTrue(quiz.isCorrect)
@@ -128,7 +130,7 @@ final class LearnerTests: XCTestCase {
         quiz.showNextCard()
         XCTAssertTrue(quiz.isCompleted)
         XCTAssertEqual(quiz.scoreTitle, "Fails: 2")
-        XCTAssertEqual(quiz.incorrectAnswers.count, 2)
+        XCTAssertEqual(quiz.incorrectAnswers.count, 1)
     }
 
     func testQuizCanReturnToThePreviousCard() {

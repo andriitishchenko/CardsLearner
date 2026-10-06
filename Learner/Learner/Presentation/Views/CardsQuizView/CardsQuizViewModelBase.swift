@@ -86,10 +86,7 @@ class CardsQuizViewModelBase: CardsQuizModelInterface {
         } else {
             isLoading = false
             invalidAnswers += 1
-            incorrectAnswers.append(QuizIncorrectAnswer(
-                question: questionText(currentCard),
-                correctAnswer: correctAnswer(currentCard)
-            ))
+            recordIncorrectAnswer(for: currentCard)
         }
     }
 
@@ -134,5 +131,15 @@ class CardsQuizViewModelBase: CardsQuizModelInterface {
             .prefix(2)
 
         options = (Array(incorrectOptions) + [answer]).shuffled()
+    }
+
+    private func recordIncorrectAnswer(for card: ModelCard) {
+        let question = questionText(card)
+        guard !incorrectAnswers.contains(where: { $0.question == question }) else { return }
+
+        incorrectAnswers.append(QuizIncorrectAnswer(
+            question: question,
+            correctAnswer: correctAnswer(card)
+        ))
     }
 }
