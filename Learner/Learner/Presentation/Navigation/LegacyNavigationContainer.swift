@@ -12,15 +12,15 @@ struct LegacyNavigationContainer: View {
         NavigationView {
             Group {
                 if isShowingCategories {
-                    CategorySidebarView(appIntent: appIntent, currentScreen: $currentScreen)
+                    CategorySidebarView(appIntent: appIntent)
                 } else {
                     MainScreenContentView(appIntent: appIntent, currentScreen: currentScreen)
                         .toolbar {
                             ToolbarItem(placement: .navigationBarLeading) {
                                 Button {
-                                    appIntent.clearNavigation()
+                                    appIntent.navigateBack()
                                 } label: {
-                                    Label(appIntent.navigationReturnDestination.title, systemImage: "chevron.backward")
+                                    Label(appIntent.navigationBackTitle, systemImage: "chevron.backward")
                                 }
                             }
                         }

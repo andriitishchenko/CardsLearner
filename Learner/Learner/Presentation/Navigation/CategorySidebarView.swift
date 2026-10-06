@@ -2,12 +2,10 @@ import SwiftUI
 
 struct CategorySidebarView: View {
     @ObservedObject private var appIntent: AppIntent
-    @Binding private var currentScreen: AppScreen
     @StateObject private var viewModel: SelectCategoryViewModel
 
-    init(appIntent: AppIntent, currentScreen: Binding<AppScreen>) {
+    init(appIntent: AppIntent) {
         self.appIntent = appIntent
-        _currentScreen = currentScreen
         _viewModel = StateObject(wrappedValue: SelectCategoryViewModel(appIntent: appIntent))
     }
 
@@ -21,8 +19,7 @@ struct CategorySidebarView: View {
 
             HStack(spacing: 12) {
                 Button {
-                    currentScreen = .settings
-                    appIntent.navigate(to: .settings)
+                    appIntent.navigateToRoot(.settings)
                 } label: {
                     Label("Settings", systemImage: "gear")
                         .frame(maxWidth: .infinity, minHeight: 44)
@@ -30,8 +27,7 @@ struct CategorySidebarView: View {
                 .buttonStyle(.bordered)
 
                 Button {
-                    currentScreen = .imports
-                    appIntent.navigate(to: .imports)
+                    appIntent.navigateToRoot(.imports)
                 } label: {
                     Label("Imported words", systemImage: "text.book.closed")
                         .frame(maxWidth: .infinity, minHeight: 44)

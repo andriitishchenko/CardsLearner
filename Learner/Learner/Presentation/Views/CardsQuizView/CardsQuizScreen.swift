@@ -31,9 +31,7 @@ struct CardsQuizScreen<ViewModel: CardsQuizModelInterface>: View {
                                 ForEach(Array(viewModel.incorrectAnswers.enumerated()), id: \.element.id) { index, answer in
                                     VStack(alignment: .leading, spacing: 5) {
                                         Text("\(index + 1). \(answer.question)")
-                                            .font(.body.weight(.semibold))
-                                        Text("Your answer: \(answer.selectedAnswer)")
-                                            .foregroundColor(.red)
+                                        .font(.body.weight(.semibold))
                                         Text("Correct answer: \(answer.correctAnswer)")
                                             .foregroundColor(.green)
                                     }

@@ -19,6 +19,7 @@ struct MainScreenContentView: View {
             InteractionOptionScreen(category: category) { selectedInteraction in
                 appIntent.navigate(to: .detail(category: category, selectedInteraction: selectedInteraction))
             }
+            .navigationTitle(category.title)
 
         case .detail(let category, let selectedInteraction):
             switch selectedInteraction {
@@ -26,18 +27,22 @@ struct MainScreenContentView: View {
                 StatefulScreen(viewModel: CardsQuizViewModel(category: category)) {
                     CardsQuizScreen(viewModel: $0)
                 }
+                .navigationTitle("Quiz Mode")
             case .viewer:
                 StatefulScreen(viewModel: CardsViewerViewModel(category: category)) {
                     CardsViewerScreen(viewModel: $0)
                 }
+                .navigationTitle("Card Viewer")
             case .quizInvert:
                 StatefulScreen(viewModel: CardsQuizInvertViewModel(category: category)) {
                     CardsQuizScreen(viewModel: $0)
                 }
+                .navigationTitle("Quiz Inverted")
             case .mixedLetters:
                 StatefulScreen(viewModel: CardsMixedLettersViewModel(category: category)) {
                     CardsMixedLettersView(viewModel: $0)
                 }
+                .navigationTitle("Mixed letters")
             }
 
         default:

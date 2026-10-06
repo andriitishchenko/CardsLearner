@@ -20,25 +20,6 @@ struct ImportedWordSet: Codable, Identifiable, Hashable, Sendable {
     }
 }
 
-enum StudyReturnDestination: Equatable {
-    case categories
-    case importedSets
-
-    var screen: AppScreen {
-        switch self {
-        case .categories: .home
-        case .importedSets: .imports
-        }
-    }
-
-    var title: String {
-        switch self {
-        case .categories: "Categories"
-        case .importedSets: "Imported words"
-        }
-    }
-}
-
 @MainActor
 final class ImportedWordSetStore {
     private let userDefaults: UserDefaults
@@ -98,16 +79,39 @@ protocol Intent: ObservableObject{}
 
 @MainActor
 class AppIntent: Intent {
-    @Published var navigationPath: [AppScreen] = []
+    @Published private(set) var navigationPath: [AppScreen] = []
     @Published var errorMessage: String?
     @Published var list:[CategoryModel] = []
     @Published private(set) var importedWordSets: [ImportedWordSet] = []
     @Published var currentScreen: AppScreen = .home
     @Published var isLoading = false
-    private(set) var studyReturnDestination: StudyReturnDestination = .categories
 
-    var navigationReturnDestination: StudyReturnDestination {
-        currentScreen == .imports ? .categories : studyReturnDestination
+    var navigationBackTitle: String {
+        guard let previousScreen = navigationPath.dropLast().last else { return "Categories" }
+
+        switch previousScreen {
+        case .home, .list:
+            return "Categories"
+        case .imports:
+            return "Imported words"
+        case .settings:
+            return "Select Language"
+        case .registration:
+            return "Registration"
+        case .profile:
+            return "Profile"
+        case .cardsViewer:
+            return "Card Viewer"
+        case .categoryOption(let category):
+            return category.title
+        case .detail(_, let interaction):
+            switch interaction {
+            case .viewer: return "Card Viewer"
+            case .quiz: return "Quiz Mode"
+            case .quizInvert: return "Quiz Inverted"
+            case .mixedLetters: return "Mixed letters"
+            }
+        }
     }
         
     let userSettings:UserSettingsUseCase
@@ -122,6 +126,7 @@ class AppIntent: Intent {
          importedWordSetStore: ImportedWordSetStore = ImportedWordSetStore()) {
         
         self.navigationPath = navigationPath
+        self.currentScreen = navigationPath.last ?? .home
         self.errorMessage = errorMessage
         
         self.localDatasource = localDatasource
@@ -240,24 +245,26 @@ class AppIntent: Intent {
         
     func navigate(to screen: AppScreen) {
         isLoading = false
-        navigationPath.append(screen)
-        self.currentScreen = screen
+        setNavigationPath(navigationPath + [screen])
+    }
+
+    func navigateToRoot(_ screen: AppScreen) {
+        isLoading = false
+        setNavigationPath([screen])
+    }
+
+    func setNavigationPath(_ path: [AppScreen]) {
+        navigationPath = path
+        currentScreen = path.last ?? .home
     }
     
     func navigateBack() {
         guard !navigationPath.isEmpty else { return }
-        navigationPath.removeLast()
-        currentScreen = navigationPath.last ?? .home
+        setNavigationPath(Array(navigationPath.dropLast()))
     }
 
     func selectMainCategory(_ category: CategoryModel) {
-        studyReturnDestination = .categories
-        navigate(to: .categoryOption(category: category))
-    }
-
-    func clearNavigation() {
-        navigationPath.removeAll()
-        currentScreen = navigationReturnDestination.screen
+        navigateToRoot(.categoryOption(category: category))
     }
         
     func handleImport(file: URL){
@@ -322,7 +329,6 @@ class AppIntent: Intent {
     }
 
     func selectImportedWordSet(_ wordSet: ImportedWordSet) {
-        studyReturnDestination = .importedSets
         navigate(to: .categoryOption(category: wordSet.category))
     }
 

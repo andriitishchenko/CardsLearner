@@ -53,7 +53,6 @@ final class LearnerTests: XCTestCase {
         XCTAssertFalse(quiz.isCorrect)
         XCTAssertEqual(quiz.incorrectAnswers.count, 1)
         XCTAssertEqual(quiz.incorrectAnswers[0].question, card.title)
-        XCTAssertEqual(quiz.incorrectAnswers[0].selectedAnswer, incorrect)
         XCTAssertEqual(quiz.incorrectAnswers[0].correctAnswer, card.translate)
 
         quiz.selectOption("not an available option")
@@ -66,7 +65,7 @@ final class LearnerTests: XCTestCase {
         }
         quiz.selectOption(secondIncorrect)
         XCTAssertEqual(quiz.incorrectAnswers.count, 2)
-        XCTAssertEqual(quiz.incorrectAnswers[1].selectedAnswer, secondIncorrect)
+        XCTAssertEqual(quiz.incorrectAnswers[1].correctAnswer, card.translate)
 
         quiz.selectOption(card.translate)
         XCTAssertTrue(quiz.isCorrect)
@@ -105,7 +104,6 @@ final class LearnerTests: XCTestCase {
         XCTAssertFalse(quiz.isCorrect)
         XCTAssertEqual(quiz.incorrectAnswers.count, 1)
         XCTAssertEqual(quiz.incorrectAnswers[0].question, card.translate)
-        XCTAssertEqual(quiz.incorrectAnswers[0].selectedAnswer, incorrect)
         XCTAssertEqual(quiz.incorrectAnswers[0].correctAnswer, card.title)
 
         quiz.selectOption("not an available option")
@@ -118,7 +116,7 @@ final class LearnerTests: XCTestCase {
         }
         quiz.selectOption(secondIncorrect)
         XCTAssertEqual(quiz.incorrectAnswers.count, 2)
-        XCTAssertEqual(quiz.incorrectAnswers[1].selectedAnswer, secondIncorrect)
+        XCTAssertEqual(quiz.incorrectAnswers[1].correctAnswer, card.title)
 
         quiz.selectOption(card.title)
         XCTAssertTrue(quiz.isCorrect)
@@ -306,11 +304,67 @@ final class LearnerTests: XCTestCase {
         XCTAssertNil(store.takePendingURL())
     }
 
-    func testStudyReturnDestinationPreservesTheCategorySource() {
-        XCTAssertEqual(StudyReturnDestination.categories.screen, .home)
-        XCTAssertEqual(StudyReturnDestination.categories.title, "Categories")
-        XCTAssertEqual(StudyReturnDestination.importedSets.screen, .imports)
-        XCTAssertEqual(StudyReturnDestination.importedSets.title, "Imported words")
+    func testNavigationBackReturnsOneRouteAtATimeForMainCategoryStudy() throws {
+        let appIntent = try makeAppIntent()
+        let selectedCategory = category(cards: cards())
+        let categoryOptions = AppScreen.categoryOption(category: selectedCategory)
+        let quiz = AppScreen.detail(category: selectedCategory, selectedInteraction: .quiz)
+
+        appIntent.selectMainCategory(selectedCategory)
+        XCTAssertEqual(appIntent.currentScreen, categoryOptions)
+        appIntent.navigate(to: quiz)
+        XCTAssertEqual(appIntent.currentScreen, quiz)
+        XCTAssertEqual(appIntent.navigationBackTitle, selectedCategory.title)
+
+        appIntent.navigateBack()
+        XCTAssertEqual(appIntent.currentScreen, categoryOptions)
+        XCTAssertEqual(appIntent.navigationPath, [categoryOptions])
+        XCTAssertEqual(appIntent.navigationBackTitle, "Categories")
+
+        appIntent.navigateBack()
+        XCTAssertEqual(appIntent.currentScreen, .home)
+        XCTAssertTrue(appIntent.navigationPath.isEmpty)
+    }
+
+    func testNavigationBackReturnsThroughImportedSetToImportedWords() throws {
+        let appIntent = try makeAppIntent()
+        let wordSet = importedSet(date: Date(), word: "hello", translation: "привет")
+        let categoryOptions = AppScreen.categoryOption(category: wordSet.category)
+        let quiz = AppScreen.detail(category: wordSet.category, selectedInteraction: .quiz)
+
+        appIntent.navigateToRoot(.imports)
+        appIntent.selectImportedWordSet(wordSet)
+        appIntent.navigate(to: quiz)
+
+        appIntent.navigateBack()
+        XCTAssertEqual(appIntent.currentScreen, categoryOptions)
+        appIntent.navigateBack()
+        XCTAssertEqual(appIntent.currentScreen, .imports)
+        XCTAssertEqual(appIntent.navigationBackTitle, "Categories")
+        appIntent.navigateBack()
+        XCTAssertEqual(appIntent.currentScreen, .home)
+        XCTAssertTrue(appIntent.navigationPath.isEmpty)
+
+        appIntent.navigateToRoot(.imports)
+        appIntent.selectMainCategory(wordSet.category)
+        XCTAssertEqual(appIntent.navigationPath, [categoryOptions])
+        XCTAssertEqual(appIntent.navigationBackTitle, "Categories")
+    }
+
+    func testNavigationPathUpdatesCurrentScreenWhenNativeStackPops() throws {
+        let appIntent = try makeAppIntent()
+        let selectedCategory = category(cards: cards())
+        let categoryOptions = AppScreen.categoryOption(category: selectedCategory)
+        let quiz = AppScreen.detail(category: selectedCategory, selectedInteraction: .quiz)
+
+        appIntent.setNavigationPath([categoryOptions, quiz])
+        XCTAssertEqual(appIntent.currentScreen, quiz)
+
+        appIntent.setNavigationPath([categoryOptions])
+        XCTAssertEqual(appIntent.currentScreen, categoryOptions)
+
+        appIntent.setNavigationPath([])
+        XCTAssertEqual(appIntent.currentScreen, .home)
     }
 
     private func assertUniqueOptions(_ options: [String], correctAnswer: String, file: StaticString = #filePath, line: UInt = #line) {
@@ -337,6 +391,29 @@ final class LearnerTests: XCTestCase {
         return ImportedWordSet(id: UUID(), importedAt: date, category: category)
     }
 
+    private func makeAppIntent() throws -> AppIntent {
+        let persistence = PersistenceController(inMemory: true)
+        let localDataSource = LocalDataSourceImpl(context: persistence.container.viewContext)
+        let suiteName = "NavigationTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        let store = ImportedWordSetStore(userDefaults: defaults)
+        return AppIntent(
+            localDatasource: localDataSource,
+            remoteDatasource: EmptyRemoteDataSource(),
+            importedWordSetStore: store
+        )
+    }
+
+}
+
+private struct EmptyRemoteDataSource: RemoteDataSource {
+    func fetchCards(url: String) async throws -> CardResponse {
+        CardResponse(version: 1, lang: "en", list: [])
+    }
+
+    func fetchCategories(url: String) async throws -> CategoryResponse {
+        CategoryResponse(lang: "en", version: 1, list: [])
+    }
 }
 
 private struct LegacyImportedWordSetFixture: Encodable {

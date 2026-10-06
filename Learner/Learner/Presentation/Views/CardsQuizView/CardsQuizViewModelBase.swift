@@ -3,7 +3,6 @@ import SwiftUI
 struct QuizIncorrectAnswer: Identifiable, Equatable {
     let id = UUID()
     let question: String
-    let selectedAnswer: String
     let correctAnswer: String
 }
 
@@ -89,7 +88,6 @@ class CardsQuizViewModelBase: CardsQuizModelInterface {
             invalidAnswers += 1
             incorrectAnswers.append(QuizIncorrectAnswer(
                 question: questionText(currentCard),
-                selectedAnswer: option,
                 correctAnswer: correctAnswer(currentCard)
             ))
         }

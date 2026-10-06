@@ -48,17 +48,17 @@
 - Regression coverage: `LearnerTests.testImportedWordSetCanBeDeleted` checks persisted deletion. `LearnerTests.testViewerCanReturnToThePreviousCardAndRecoverFromCompletion`, `LearnerTests.testQuizCanReturnToThePreviousCard`, and `LearnerTests.testMixedLettersCanReturnToThePreviousWord` cover previous-item navigation and boundaries.
 - Known limitations: XCTest covers the view-model and storage behavior; rendered swipe recognition and the row's swipe-to-delete gesture are not UI-tested.
 
-## BUG-APP-006: Return imported study sessions to the imported sets list
+## BUG-APP-006: Preserve nested navigation through study sessions
 - Type: Bug
-- Status: Resolved
-- Scope: Returning from study options and card activities opened from a saved imported word set.
-- Observed behavior / Reproduction: Select an imported word set, open a study mode, then use the Categories return action. It returns to the main categories list instead of the imported sets list.
-- Goal / Acceptance criteria: Study activities opened from an imported set return to Imported words. Activities opened from a main-list category continue to return to Categories.
-- Expected behavior and invariants: The return destination follows the source used to open the category, through the study-option and activity screens.
-- Enforcement boundary: `AppIntent` route selection and the legacy navigation return action.
-- Current behavior: Selecting a main-list category records Categories as the study return destination. Selecting a saved imported set records Imported words. The return action clears the activity route to that recorded destination and labels the return button accordingly; from the imported sets list, the same action returns to Categories.
-- Regression coverage: `LearnerTests.testStudyReturnDestinationPreservesTheCategorySource` verifies the destination screen and title for both entry points.
-- Known limitations: The test checks route destination state; rendered return navigation is not covered on device.
+- Status: Current
+- Scope: Back navigation from study options and activities opened from the main category list or a saved imported word set.
+- Observed behavior / Reproduction: Choose a category, open a study activity, and use Back. The app returns directly to the main categories screen instead of the preceding activity chooser. Imported sets similarly skip intermediate screens.
+- Goal / Acceptance criteria: Back returns one screen at a time. Main-list study routes return through the activity chooser to Categories; imported-set routes return through the activity chooser to Imported words.
+- Expected behavior and invariants: The navigation path records the route hierarchy and both platform navigation containers consume the same path. Returning from an activity reveals its activity chooser; returning from that chooser reveals the list that opened it.
+- Enforcement boundary: `AppIntent` route selection and path updates, the modern `NavigationStack`, the legacy navigation return action, and the `LearnerTests` XCTest target.
+- Current behavior: The modern `NavigationStack` binds to `AppIntent.navigationPath`, and its native Back action updates the current route. The legacy container's Back button removes one route. Selecting a category from the main list starts a route from Categories; selecting an imported set pushes from Imported words. Back therefore returns through the activity chooser to the correct source list.
+- Regression coverage: `LearnerTests.testNavigationBackReturnsOneRouteAtATimeForMainCategoryStudy` and `LearnerTests.testNavigationBackReturnsThroughImportedSetToImportedWords` cover both route histories. `LearnerTests.testNavigationPathUpdatesCurrentScreenWhenNativeStackPops` verifies that a native stack path update synchronizes the displayed route.
+- Known limitations: The rendered navigation controls and regular-width split view are not covered by UI automation.
 
 ## BUG-APP-005: Open Settings and Imported words from the category screen
 - Type: Bug
@@ -77,11 +77,11 @@
 - Status: Current
 - Scope: Forward and reverse quiz view models and completed quiz statistics.
 - Goal / Acceptance criteria: Both quiz directions handle empty categories, build distinct choices containing the correct answer, allow another choice after an incorrect answer, count failed attempts, and finish after the final card.
-- Expected behavior and invariants: Empty quizzes complete with a zero score and `0 of 0` progress. A presented question uses the card title in the forward quiz and its translation in the reverse quiz. Choices contain the correct answer and up to two distinct incorrect answers. Invalid selections are ignored; a valid incorrect answer records a failure and allows retry. A correct answer advances after the existing delay; swiping right revisits the previous question and swiping left advances; finishing reports the number of failed attempts and lists each incorrect attempt with its question, selected answer, and correct answer. Long result lists remain reachable by scrolling.
+- Expected behavior and invariants: Empty quizzes complete with a zero score and `0 of 0` progress. A presented question uses the card title in the forward quiz and its translation in the reverse quiz. Choices contain the correct answer and up to two distinct incorrect answers. Invalid selections are ignored; a valid incorrect answer records a failure and allows retry. A correct answer advances after the existing delay; swiping right revisits the previous question and swiping left advances; finishing reports the number of failed attempts and lists each missed question with only its correct answer. Long result lists remain reachable by scrolling.
 - Enforcement boundary: `CardsQuizViewModelBase`, `CardsQuizScreen`, `CardsQuizViewModel`, `CardsQuizInvertViewModel`, and the `LearnerTests` XCTest target.
-- Current behavior: `CardsQuizViewModelBase` owns the shared sequence, choice generation, answer validation, scoring, completion, incorrect-attempt details, and previous/next navigation behavior. The forward and reverse view models provide the question and answer fields. Empty categories are handled, invalid selections are ignored, incorrect answers can be retried, a correct answer advances after a two-second delay, and horizontal swipes navigate between questions. Completed results show each failed attempt's question, selected answer, and correct answer in the same scrollable screen.
-- Regression coverage: `LearnerTests.testForwardQuizBehavior` and `LearnerTests.testReverseQuizBehavior` cover empty categories, question direction, distinct choices containing the correct answer, ignored invalid selections, multiple incorrect attempts, attempt details, delayed advancement, and final scores. `LearnerTests.testQuizCanReturnToThePreviousCard` covers backward navigation and resetting the selected answer. The result list's rendered scrolling is not UI-tested.
-- Known limitations: The correct-answer advancement delay is fixed at two seconds, so the two flow tests wait for that delay.
+- Current behavior: `CardsQuizViewModelBase` owns the shared sequence, choice generation, answer validation, scoring, completion, incorrect-attempt details, and previous/next navigation behavior. The forward and reverse view models provide the question and answer fields. Empty categories are handled, invalid selections are ignored, incorrect answers can be retried, a correct answer advances after a two-second delay, and horizontal swipes navigate between questions. Completed results show each missed question and only its correct answer in the same scrollable screen.
+- Regression coverage: `LearnerTests.testForwardQuizBehavior` and `LearnerTests.testReverseQuizBehavior` cover empty categories, question direction, distinct choices containing the correct answer, ignored invalid selections, multiple incorrect attempts, correct-answer details, delayed advancement, and final scores. `LearnerTests.testQuizCanReturnToThePreviousCard` covers backward navigation and resetting the selected answer. The result list's rendered scrolling is not UI-tested.
+- Known limitations: The correct-answer advancement delay is fixed at two seconds, so the two flow tests wait for that delay. The rendered result rows and their scrolling are not UI-tested.
 
 ## FEAT-IMPORT-001: Parse imported word pairs consistently
 - Type: Feature
