@@ -24,7 +24,7 @@ The test command requires an installed simulator and resolved Swift Package Mana
 
 ## App Store releases
 
-The Fastlane iOS release lane loads the repository-root `.env` file. Set `FASTLANE_PASSWORD` there before running `bundle exec fastlane ios release`. The `.env` file is excluded from Git so account credentials stay local; do not commit it.
+The Fastlane iOS release lane loads the repository-root `.env` file. Set `FASTLANE_PASSWORD` there before running `bundle exec fastlane ios release`. The `.env` file is excluded from Git so account credentials stay local; do not commit it. The lane uses Xcode automatic signing for the app and Share extension; Xcode must be signed in to the Developer team with signing access for both targets and the App Groups capability. See [release automation behavior](DOCS/behavior/release.md) for the signing requirements and limitations.
 
 ## Documentation
 

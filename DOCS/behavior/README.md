@@ -27,3 +27,4 @@ Use a stable identifier and keep it when the record is updated. These records de
 ## Records
 
 - [App behavior](app.md)
+- [Release automation behavior](release.md)
