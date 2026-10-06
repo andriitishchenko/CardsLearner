@@ -29,7 +29,7 @@ platform :ios do
     gym(
       project: "Learner/Learner.xcodeproj",
       scheme: "Learner",
-      export_method: "app-store-connect",
+      export_method: "app-store",
       xcargs: "-allowProvisioningUpdates",
       export_xcargs: "-allowProvisioningUpdates",
       export_options: {
