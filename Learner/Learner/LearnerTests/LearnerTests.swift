@@ -4,6 +4,31 @@ import XCTest
 
 @MainActor
 final class LearnerTests: XCTestCase {
+    func testGroupCardsRelationshipHasSingleGroupInverse() throws {
+        let persistence = PersistenceController(inMemory: true)
+        let context = persistence.container.viewContext
+        let model = try XCTUnwrap(context.persistentStoreCoordinator?.managedObjectModel)
+        let groupEntity = try XCTUnwrap(model.entitiesByName["GroupEntity"])
+        let cardsRelationship = try XCTUnwrap(groupEntity.relationshipsByName["cards"])
+        let groupRelationship = try XCTUnwrap(cardsRelationship.inverseRelationship)
+
+        XCTAssertEqual(groupRelationship.name, "group")
+        XCTAssertFalse(groupRelationship.isToMany)
+
+        let firstGroup = GroupEntity(context: context)
+        let secondGroup = GroupEntity(context: context)
+        let card = CardEntity(context: context)
+        firstGroup.addToCards(card)
+
+        XCTAssertEqual(card.group, firstGroup)
+
+        secondGroup.addToCards(card)
+
+        XCTAssertEqual(card.group, secondGroup)
+        XCTAssertFalse((firstGroup.cards as? Set<CardEntity>)?.contains(card) ?? false)
+        XCTAssertTrue((secondGroup.cards as? Set<CardEntity>)?.contains(card) ?? false)
+    }
+
     func testForwardQuizBehavior() async throws {
         let emptyQuiz = CardsQuizViewModel(category: category(cards: []))
         XCTAssertTrue(emptyQuiz.isCompleted)

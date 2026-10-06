@@ -1,5 +1,17 @@
 # App behavior
 
+## BUG-APP-010: Define the inverse of the local group-card relationship
+- Type: Bug
+- Status: Resolved
+- Scope: The Core Data relationship between locally stored categories and cards.
+- Observed behavior / Reproduction: The Core Data model defines `GroupEntity.cards` without an inverse, producing a model warning and leaving the owning category unavailable from a card.
+- Goal / Acceptance criteria: Define a `CardEntity.group` inverse so Core Data can maintain the group-card association from either side.
+- Expected behavior and invariants: Each locally stored card belongs to at most one group, consistent with the domain model's single category assignment; adding a card to a group makes the inverse available, and moving it to another group removes it from the prior group's cards.
+- Enforcement boundary: `Learner.xcdatamodeld` and the generated `CardEntity` managed-object properties.
+- Current behavior: `GroupEntity.cards` and `CardEntity.group` are inverse relationships. A card has at most one group; Core Data synchronizes the inverse when cards are added to or moved between groups.
+- Regression coverage: `LearnerTests.testGroupCardsRelationshipHasSingleGroupInverse` checks the inverse metadata, its to-one cardinality, and relationship synchronization when moving a card between groups.
+- Known limitations: Migration of existing persistent stores is not covered by a regression test.
+
 ## BUG-APP-009: Import each Share extension request only once
 - Type: Bug
 - Status: Resolved

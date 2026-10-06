@@ -9,12 +9,13 @@
         <attribute name="translate" optional="YES" attributeType="String"/>
         <attribute name="uid" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="voice" optional="YES" attributeType="String"/>
+        <relationship name="group" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GroupEntity" inverseName="cards" inverseEntity="GroupEntity"/>
     </entity>
     <entity name="GroupEntity" representedClassName="GroupEntity" syncable="YES">
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="order" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="uid" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="cards" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CardEntity"/>
+        <relationship name="cards" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CardEntity" inverseName="group" inverseEntity="CardEntity"/>
     </entity>
 </model>

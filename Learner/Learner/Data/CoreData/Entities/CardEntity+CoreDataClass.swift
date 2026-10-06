@@ -28,6 +28,7 @@ extension CardEntity {
     @NSManaged public var transcription: String?
     @NSManaged public var translate: String?
     @NSManaged public var lang: String?
+    @NSManaged public var group: GroupEntity?
 
 }
 
