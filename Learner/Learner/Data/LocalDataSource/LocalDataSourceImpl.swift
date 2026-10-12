@@ -32,6 +32,31 @@ final class LocalDataSourceImpl: LocalDataSource {
         }
         try await saveContext()
     }
+
+    func replaceGroups(_ groups: [GroupEntity]) async throws {
+        do {
+            let replacementGroupIDs = Set(groups.map(\.objectID))
+            let existingGroups = try context.fetch(GroupEntity.fetchRequest()).filter {
+                !$0.isInserted && !replacementGroupIDs.contains($0.objectID)
+            }
+            let existingCards = try context.fetch(CardEntity.fetchRequest()).filter { !$0.isInserted }
+
+            for card in existingCards {
+                context.delete(card)
+            }
+            for group in existingGroups {
+                context.delete(group)
+            }
+            for group in groups {
+                context.insert(group)
+            }
+
+            try await saveContext()
+        } catch {
+            context.rollback()
+            throw error
+        }
+    }
     
     func fetchGroups() async throws -> [GroupEntity] {
         print("fetchGroups")
@@ -65,25 +90,6 @@ final class LocalDataSourceImpl: LocalDataSource {
         return Array(cards)
     }
 
-    // MARK: - Cleanup
-
-    func cleanup() async throws {
-        let fetchRequestGroups: NSFetchRequest<NSFetchRequestResult> = GroupEntity.fetchRequest()
-        let deleteRequestGroups = NSBatchDeleteRequest(fetchRequest: fetchRequestGroups)
-        
-        let fetchRequestCards: NSFetchRequest<NSFetchRequestResult> = CardEntity.fetchRequest()
-        let deleteRequestCards = NSBatchDeleteRequest(fetchRequest: fetchRequestCards)
-        
-        do {
-            try context.execute(deleteRequestGroups)
-            try context.execute(deleteRequestCards)
-            context.reset()
-            try await self.saveContext()
-        } catch {
-            throw error
-        }
-    }
-    
     func saveContext() async throws{
         try context.save()
         print("context saved")

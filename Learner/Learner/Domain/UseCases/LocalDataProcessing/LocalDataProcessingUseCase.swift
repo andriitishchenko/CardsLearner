@@ -11,6 +11,6 @@ import Foundation
 protocol LocalDataProcessingUseCase {
     func validate(data: [CategoryModel]) throws
     func executeSave(data:[CategoryModel]) async throws
+    func executeReplace(data: [CategoryModel]) async throws
     func executeLoad() async throws -> [CategoryModel]
-    func cleanup() async throws
 }

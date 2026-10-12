@@ -13,6 +13,8 @@ struct LegacyNavigationContainer: View {
             Group {
                 if isShowingCategories {
                     CategorySidebarView(appIntent: appIntent)
+                } else if currentScreen == .settings {
+                    MainScreenContentView(appIntent: appIntent, currentScreen: currentScreen)
                 } else {
                     MainScreenContentView(appIntent: appIntent, currentScreen: currentScreen)
                         .toolbar {
@@ -20,8 +22,12 @@ struct LegacyNavigationContainer: View {
                                 Button {
                                     appIntent.navigateBack()
                                 } label: {
-                                    Label(appIntent.navigationBackTitle, systemImage: "chevron.backward")
+                                    Image(systemName: "chevron.backward")
+                                        .frame(width: 44, height: 44)
+                                        .contentShape(Rectangle())
                                 }
+                                .accessibilityLabel(appIntent.navigationBackTitle)
+                                .buttonStyle(.plain)
                             }
                         }
                 }

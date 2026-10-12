@@ -125,6 +125,10 @@ final class SelectLanguageViewModel: ObservableObject {
             
         }
     }
+
+    func navigateBack() {
+        appIntent.navigateBack()
+    }
     
     @MainActor
     func showMessage(_ str:String) async{

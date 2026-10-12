@@ -23,6 +23,10 @@ final class LocalDataRepositoryImpl: LocalDataRepository {
     func saveGroups(_ groups: [GroupEntity]) async throws{
         try await self.localDataSource.saveGroups(groups)
     }
+
+    func replaceGroups(_ groups: [GroupEntity]) async throws {
+        try await self.localDataSource.replaceGroups(groups)
+    }
     
     func fetchGroups() async throws -> [GroupEntity] {
         return try await self.localDataSource.fetchGroups()
@@ -36,7 +40,4 @@ final class LocalDataRepositoryImpl: LocalDataRepository {
         return try await self.localDataSource.fetchCards(forGroup: group)
     }
     
-    func cleanup() async throws {
-        try await self.localDataSource.cleanup()
-    }
 }

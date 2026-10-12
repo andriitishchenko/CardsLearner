@@ -8,10 +8,23 @@
 import SwiftUI
 
 struct SelectLanguageScreen: View {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @ObservedObject var viewModel: SelectLanguageViewModel
     
     var body: some View {
         Form {
+                if horizontalSizeClass == .compact {
+                    Section {
+                        Button {
+                            viewModel.navigateBack()
+                        } label: {
+                            Label("Categories", systemImage: "chevron.backward")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .accessibilityIdentifier("settingsBackToCategories")
+                    }
+                }
+
                 // Dropdown for "Language you speak"
                 Section(header: Text("Language you speak")) {
                     Picker(selection: $viewModel.selectedBaseLanguage, label: Text("Select language")) {

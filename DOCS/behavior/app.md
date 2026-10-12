@@ -1,5 +1,17 @@
 # App behavior
 
+## BUG-APP-013: Replace the remote category cache atomically
+- Type: Bug
+- Status: Current
+- Scope: Refreshing downloaded categories and cards in the local Core Data cache.
+- Observed behavior / Reproduction: Refresh deletes the current local cache before saving the fetched data. If conversion or persistence fails after cleanup, the previously usable cache is lost.
+- Goal / Acceptance criteria: A remote refresh replaces categories and cards as one persistence operation. Invalid data or a failed save leaves the previous cache available.
+- Expected behavior and invariants: Validate and convert fetched content before deleting existing records. Delete and insert the replacement in one Core Data context save; roll back unsaved changes on failure. A successful replacement contains only the new categories and their cards.
+- Enforcement boundary: `AppIntent.saveFetchedData`, the local data-processing use case, the local repository, and Core Data local data source.
+- Current behavior: Refresh validates and converts all fetched content before it touches the local cache. The local data source deletes old cards and groups, inserts their replacements, and saves once; a failed fetch or save rolls back the unsaved context changes.
+- Regression coverage: `LearnerTests.testLocalDataProcessingReplacesCacheAndKeepsItWhenReplacementIsInvalid` verifies successful full replacement and that invalid input leaves the previous cache intact.
+- Known limitations: XCTest does not induce a persistent-store save failure, so the failure rollback branch is enforced in the Core Data implementation but not directly exercised.
+
 ## BUG-APP-010: Define the inverse of the local group-card relationship
 - Type: Bug
 - Status: Resolved
@@ -64,12 +76,12 @@
 - Type: Bug
 - Status: Resolved
 - Scope: Settings and Imported words actions on the category screen, including compact-width navigation and initial local-data loading.
-- Observed behavior / Reproduction: On a compact-width device, tapping either action can leave the categories column visible. Initial loading also forced a `.list` route after restoring local categories.
-- Goal / Acceptance criteria: Tapping Settings opens the language settings screen; tapping Imported words opens the saved-import list.
-- Expected behavior and invariants: Initial data loading must not replace a screen selected by the user. Compact-width devices use single-column navigation so Settings and Imported words replace the category screen; regular-width devices retain the split view.
+- Observed behavior / Reproduction: On a compact-width device, tapping either action can leave the categories column visible. Initial loading also forced a `.list` route after restoring local categories. On the current iOS simulator, a navigation-bar return control could be visible in the accessibility tree but not tappable.
+- Goal / Acceptance criteria: Tapping Settings opens the language settings screen; tapping Imported words opens the saved-import list. The compact Settings return action is tappable.
+- Expected behavior and invariants: Initial data loading must not replace a screen selected by the user. Compact-width devices use single-column navigation so Settings and Imported words replace the category screen; regular-width devices retain the split view. The Settings and Imported words actions remain visible and tappable when category content fills the screen. Compact-width Settings provides an in-content return action to categories.
 - Enforcement boundary: `AppIntent.forceFetching`, size-class selection in `MainView`, both navigation containers, and `LearnerUITests`.
-- Current behavior: Initial loading restores categories without adding a navigation route. `MainView` uses the single-column container on compact widths and the split-view container on regular widths. Both actions update the selected screen and route state.
-- Regression coverage: `LearnerUITests.testScreenshots` checks Settings, returns to categories, opens Imported words, and checks its navigation bar.
+- Current behavior: Initial loading restores categories without adding a navigation route. `MainView` uses the single-column container on compact widths and the split-view container on regular widths. The category list scrolls above a bottom safe-area action bar, keeping Settings and Imported words tappable with a full category grid. On compact widths, Settings has an in-content Categories action that returns to the category list; the action is not placed in the navigation bar.
+- Regression coverage: `LearnerUITests.testScreenshots` asserts that Settings and the Categories return button are hittable, opens Settings, returns to categories, opens Imported words, and checks its navigation bar.
 - Known limitations: The UI test covers compact-width navigation on an iOS Simulator; it does not exercise the regular-width split view or iOS 15 runtime.
 
 ## FEAT-QUIZ-001: Preserve quiz behavior in both answer directions
@@ -137,8 +149,8 @@
 - Expected behavior and invariants: UI state changes occur on the main actor; asynchronous work is awaited before dependent state changes; empty collections and malformed external data do not crash the app; persistence and network failures remain visible to callers.
 - Enforcement boundary: `SWIFT_VERSION` settings in `Learner/Learner.xcodeproj/project.pbxproj`, Swift source files in `Learner/Learner/` and `Learner/LearnerImport/`, and the shared `Learner` scheme.
 - Current behavior: App, import extension, unit-test, and UI-test targets use Swift 6 language mode. UI and Core Data access are main-actor isolated; remote values crossing concurrency boundaries are Sendable. Network image loading and reachability checks are asynchronous. Import parsing rejects empty pairs, retains text after the first delimiter, and avoids force-unwrapped settings or navigation state. Quiz options contain distinct choices and reject unavailable answers.
-- Regression coverage: The unit tests cover API URL, transport, HTTP response, and decoding outcomes; remote aggregation; Core Data conversion and identifier bounds; both quiz directions; navigation state; imported-word persistence; and shared word-pair parsing. The UI test covers compact-width Settings and Imported words navigation. The project also builds the app, import extension, and both test targets in Swift 6 mode.
-- Known limitations: Core Data queue behavior and broader rendered screen interactions have no focused assertions. Build verification does not assess runtime behavior on physical devices or prove thread safety for code paths not exercised by the compiler. The app still relies on configured remote repository data and app-group entitlements at runtime.
+- Regression coverage: The unit tests cover API URL, transport, HTTP response, and decoding outcomes; remote aggregation; Core Data conversion, identifier bounds, and cache replacement; both quiz directions; navigation state; imported-word persistence; and shared word-pair parsing. The UI test covers Settings and Imported words navigation, including action hit targets. The project also builds the app, import extension, and both test targets in Swift 6 mode.
+- Known limitations: Core Data store-level save-failure rollback and broader rendered screen interactions have no focused assertions. Build verification does not assess runtime behavior on physical devices or prove thread safety for code paths not exercised by the compiler. The app still relies on configured remote repository data and app-group entitlements at runtime.
 
 ## BUG-APP-004: Support iOS 15 navigation and deployment
 - Type: Bug
@@ -178,4 +190,4 @@
 
 ## API client behavior
 
-`APIClientTests.swift` covers successful JSON decoding, malformed URLs, non-HTTP responses, non-2xx HTTP responses, decoding failures, and transport-error propagation. Remote aggregation and local Core Data conversion have focused tests in `LearnerTests.swift`. The shared Xcode scheme also includes the `LearnerUITests` target. Core Data queue behavior and broader rendered screen interactions remain outside focused automated assertions.
+`APIClientTests.swift` covers successful JSON decoding, malformed URLs, non-HTTP responses, non-2xx HTTP responses, decoding failures, and transport-error propagation. `LearnerTests.swift` covers remote aggregation, local Core Data conversion and cache replacement, and the behavior records above list the other focused unit and UI coverage. Core Data save-failure rollback and broader rendered screen interactions remain outside focused automated assertions.

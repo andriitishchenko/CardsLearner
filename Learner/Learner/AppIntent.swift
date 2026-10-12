@@ -219,9 +219,7 @@ class AppIntent: Intent {
     private func saveFetchedData(_ list: [CategoryModel]) async throws {
         let localRepository = LocalDataRepositoryImpl(localDataSource: self.localDatasource)
         let localDataProcessor = LocalDataProcessingUseCaseImpl(localRepository: localRepository)
-        try localDataProcessor.validate(data: list)
-        try await localDataProcessor.cleanup()
-        try await localDataProcessor.executeSave(data: list)
+        try await localDataProcessor.executeReplace(data: list)
     }
     
     private func downloadImages(_ list: [CategoryModel]) async {

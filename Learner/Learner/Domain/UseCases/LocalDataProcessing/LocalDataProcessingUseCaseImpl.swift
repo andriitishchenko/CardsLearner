@@ -113,6 +113,12 @@ final class LocalDataProcessingUseCaseImpl: LocalDataProcessingUseCase {
         let list = try data.map { try convertToGroupEntity(from: $0) }
         try await self.localRepository.saveGroups(list)
     }
+
+    func executeReplace(data: [CategoryModel]) async throws {
+        try validate(data: data)
+        let groups = try data.map { try convertToGroupEntity(from: $0) }
+        try await localRepository.replaceGroups(groups)
+    }
     
     func executeLoad() async throws -> [CategoryModel] {
         let list = try await self.localRepository.fetchGroups()
@@ -120,7 +126,4 @@ final class LocalDataProcessingUseCaseImpl: LocalDataProcessingUseCase {
         return result
     }
     
-    func cleanup() async throws {
-        try await self.localRepository.cleanup()
-    }
 }

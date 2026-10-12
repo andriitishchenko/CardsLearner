@@ -10,13 +10,10 @@ struct CategorySidebarView: View {
     }
 
     var body: some View {
-        VStack {
-            ScrollView {
-                SelectCategoryScreen(viewModel: viewModel)
-            }
-
-            Spacer()
-
+        ScrollView {
+            SelectCategoryScreen(viewModel: viewModel)
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
             HStack(spacing: 12) {
                 Button {
                     appIntent.navigateToRoot(.settings)
@@ -34,6 +31,9 @@ struct CategorySidebarView: View {
                 }
                 .buttonStyle(.bordered)
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(.ultraThinMaterial)
         }
         .navigationTitle("Categories")
     }

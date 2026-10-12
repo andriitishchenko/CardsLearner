@@ -105,6 +105,47 @@ final class LearnerTests: XCTestCase {
         XCTAssertEqual(loadedCard, expectedCard)
     }
 
+    func testLocalDataProcessingReplacesCacheAndKeepsItWhenReplacementIsInvalid() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        let dataSource = LocalDataSourceImpl(context: persistence.container.viewContext)
+        let repository = LocalDataRepositoryImpl(localDataSource: dataSource)
+        let useCase = LocalDataProcessingUseCaseImpl(localRepository: repository)
+        let previousCategory = CategoryModel(
+            id: 7,
+            title: "Previous",
+            picture: "",
+            order: 1,
+            list: [ModelCard(id: 71, categoryId: 7, title: "Old", translate: "Alte", localCode: "de", picture: nil, voice: nil, transcription: nil)]
+        )
+        let replacementCategory = CategoryModel(
+            id: 8,
+            title: "Current",
+            picture: "",
+            order: 2,
+            list: [ModelCard(id: 81, categoryId: 8, title: "New", translate: "Neu", localCode: "de", picture: nil, voice: nil, transcription: nil)]
+        )
+
+        try await useCase.executeSave(data: [previousCategory])
+        try await useCase.executeReplace(data: [replacementCategory])
+
+        let replacedCategories = try await useCase.executeLoad()
+        XCTAssertEqual(replacedCategories.map(\.id), [replacementCategory.id])
+        XCTAssertEqual(replacedCategories.first?.list.map(\.id), [81])
+
+        let invalidCard = ModelCard(id: Int.max, categoryId: 8, title: "Invalid", translate: "Invalid", localCode: "de", picture: nil, voice: nil, transcription: nil)
+        let invalidCategory = CategoryModel(id: 8, title: "Invalid", picture: "", order: 1, list: [invalidCard])
+        do {
+            try await useCase.executeReplace(data: [invalidCategory])
+            XCTFail("Expected replacement validation to reject an out-of-range card identifier")
+        } catch LocalDataProcessingError.integerOutOfRange {
+            // Invalid input is rejected before the existing cache is touched.
+        }
+
+        let categoriesAfterRejectedReplacement = try await useCase.executeLoad()
+        XCTAssertEqual(categoriesAfterRejectedReplacement.map(\.id), [replacementCategory.id])
+        XCTAssertEqual(categoriesAfterRejectedReplacement.first?.list.map(\.id), [81])
+    }
+
     func testLocalDataProcessingRejectsValuesOutsideCoreDataIntegerRange() throws {
         let persistence = PersistenceController(inMemory: true)
         let dataSource = LocalDataSourceImpl(context: persistence.container.viewContext)
