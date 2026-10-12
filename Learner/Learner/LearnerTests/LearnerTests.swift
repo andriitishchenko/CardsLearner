@@ -29,6 +29,116 @@ final class LearnerTests: XCTestCase {
         XCTAssertTrue((secondGroup.cards as? Set<CardEntity>)?.contains(card) ?? false)
     }
 
+    func testRemoteAggregationPreservesTranslatedCardFieldsAndMatchesByID() async throws {
+        let repository = FixtureRemoteDataRepository(
+            categories: CategoryResponse(lang: "en", version: 1, list: [
+                RestCategory(id: 10, order: 1, title: "Greetings", picture: "greetings.png"),
+                RestCategory(id: 20, order: 2, title: "Travel", picture: "travel.png")
+            ]),
+            originCards: CardResponse(version: 1, lang: "en", list: [
+                RestCard(id: 1, categoryId: 10, title: "Hello", picture: "hello.png", voice: "origin-audio", transcription: "origin-phonetic"),
+                RestCard(id: 2, categoryId: 20, title: "Train", picture: nil, voice: nil, transcription: nil)
+            ]),
+            translatedCards: CardResponse(version: 1, lang: "de", list: [
+                RestCard(id: 1, categoryId: 999, title: "Hallo", picture: "translated.png", voice: "translated-audio", transcription: "[ˈhalo]"),
+                RestCard(id: 3, categoryId: 10, title: "Unused", picture: nil, voice: nil, transcription: nil)
+            ])
+        )
+        let useCase = AggregateDataUseCaseImpl(
+            settings: UserSettings(originURL: "origin", learnURL: "translated"),
+            remoteRepository: repository
+        )
+
+        let categories = try await useCase.execute()
+
+        XCTAssertEqual(categories.map(\.id), [10, 20])
+        XCTAssertEqual(categories[0].title, "Greetings")
+        XCTAssertEqual(categories[0].picture, "greetings.png")
+        XCTAssertEqual(categories[0].order, 1)
+        XCTAssertEqual(categories[1].list.count, 0)
+
+        let card = try XCTUnwrap(categories[0].list.first)
+        XCTAssertEqual(card.id, 1)
+        XCTAssertEqual(card.categoryId, 10)
+        XCTAssertEqual(card.title, "Hallo")
+        XCTAssertEqual(card.translate, "Hello")
+        XCTAssertEqual(card.localCode, "de")
+        XCTAssertEqual(card.picture, "hello.png")
+        XCTAssertEqual(card.voice, "translated-audio")
+        XCTAssertEqual(card.transcription, "[ˈhalo]")
+    }
+
+    func testLocalDataProcessingRoundTripsCategoryAndCardFields() async throws {
+        let persistence = PersistenceController(inMemory: true)
+        let dataSource = LocalDataSourceImpl(context: persistence.container.viewContext)
+        let repository = LocalDataRepositoryImpl(localDataSource: dataSource)
+        let useCase = LocalDataProcessingUseCaseImpl(localRepository: repository)
+        let expectedCard = ModelCard(
+            id: 41,
+            categoryId: 7,
+            title: "Hallo",
+            translate: "Hello",
+            localCode: "de",
+            picture: "https://example.com/hello.png",
+            voice: "https://example.com/hello.mp3",
+            transcription: "[ˈhalo]"
+        )
+        let expectedCategory = CategoryModel(
+            id: 7,
+            title: "Greetings",
+            picture: "https://example.com/greetings.png",
+            order: 3,
+            list: [expectedCard]
+        )
+
+        try useCase.validate(data: [expectedCategory])
+        try await useCase.executeSave(data: [expectedCategory])
+        let loadedCategories = try await useCase.executeLoad()
+
+        let loadedCategory = try XCTUnwrap(loadedCategories.first)
+        XCTAssertEqual(loadedCategory.id, expectedCategory.id)
+        XCTAssertEqual(loadedCategory.title, expectedCategory.title)
+        XCTAssertEqual(loadedCategory.picture, expectedCategory.picture)
+        XCTAssertEqual(loadedCategory.order, expectedCategory.order)
+
+        let loadedCard = try XCTUnwrap(loadedCategory.list.first)
+        XCTAssertEqual(loadedCard, expectedCard)
+    }
+
+    func testLocalDataProcessingRejectsValuesOutsideCoreDataIntegerRange() throws {
+        let persistence = PersistenceController(inMemory: true)
+        let dataSource = LocalDataSourceImpl(context: persistence.container.viewContext)
+        let repository = LocalDataRepositoryImpl(localDataSource: dataSource)
+        let useCase = LocalDataProcessingUseCaseImpl(localRepository: repository)
+        let outOfRangeCategory = CategoryModel(id: Int.max, title: "Invalid", picture: "", order: 0, list: [])
+        let outOfRangeCategoryOrder = CategoryModel(id: 1, title: "Invalid", picture: "", order: Int.max, list: [])
+        let outOfRangeCard = ModelCard(id: Int.max, categoryId: 1, title: "Invalid", translate: "Invalid", localCode: "en", picture: nil, voice: nil, transcription: nil)
+        let outOfRangeCardCategory = ModelCard(id: 1, categoryId: Int.max, title: "Invalid", translate: "Invalid", localCode: "en", picture: nil, voice: nil, transcription: nil)
+        let categoryWithOutOfRangeCard = CategoryModel(id: 1, title: "Invalid", picture: "", order: 0, list: [outOfRangeCard])
+        let categoryWithOutOfRangeCardCategory = CategoryModel(id: 1, title: "Invalid", picture: "", order: 0, list: [outOfRangeCardCategory])
+
+        XCTAssertThrowsError(try useCase.validate(data: [outOfRangeCategory])) { error in
+            guard case LocalDataProcessingError.integerOutOfRange = error else {
+                return XCTFail("Expected an out-of-range category identifier error")
+            }
+        }
+        XCTAssertThrowsError(try useCase.validate(data: [outOfRangeCategoryOrder])) { error in
+            guard case LocalDataProcessingError.integerOutOfRange = error else {
+                return XCTFail("Expected an out-of-range category order error")
+            }
+        }
+        XCTAssertThrowsError(try useCase.validate(data: [categoryWithOutOfRangeCard])) { error in
+            guard case LocalDataProcessingError.integerOutOfRange = error else {
+                return XCTFail("Expected an out-of-range card identifier error")
+            }
+        }
+        XCTAssertThrowsError(try useCase.validate(data: [categoryWithOutOfRangeCardCategory])) { error in
+            guard case LocalDataProcessingError.integerOutOfRange = error else {
+                return XCTFail("Expected an out-of-range card category identifier error")
+            }
+        }
+    }
+
     func testForwardQuizBehavior() async throws {
         let emptyQuiz = CardsQuizViewModel(category: category(cards: []))
         XCTAssertTrue(emptyQuiz.isCompleted)
@@ -415,6 +525,25 @@ private struct EmptyRemoteDataSource: RemoteDataSource {
 
     func fetchCategories(url: String) async throws -> CategoryResponse {
         CategoryResponse(lang: "en", version: 1, list: [])
+    }
+}
+
+private struct FixtureRemoteDataRepository: RemoteDataRepository {
+    let categories: CategoryResponse
+    let originCards: CardResponse
+    let translatedCards: CardResponse
+
+    func fetchCards(url: String) async throws -> CardResponse {
+        switch url {
+        case "origin": return originCards
+        case "translated": return translatedCards
+        default: throw URLError(.badURL)
+        }
+    }
+
+    func fetchCategories(url: String) async throws -> CategoryResponse {
+        guard url == "origin" else { throw URLError(.badURL) }
+        return categories
     }
 }
 

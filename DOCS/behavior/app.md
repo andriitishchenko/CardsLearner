@@ -95,6 +95,18 @@
 - Regression coverage: No XCTest seam covers system-symbol availability or SwiftUI geometry update diagnostics.
 - Known limitations: Runtime-log behavior requires simulator or device observation.
 
+## BUG-APP-012: Preserve voice resources during remote card aggregation
+- Type: Bug
+- Status: Resolved
+- Scope: Mapping translated card data from the remote repository into study cards.
+- Observed behavior / Reproduction: When matching origin and study-language cards by ID, the aggregated card receives the study-language transcription as both `voice` and `transcription`, discarding the separate voice resource.
+- Goal / Acceptance criteria: Preserve the study-language card's voice resource and transcription in their corresponding model fields.
+- Expected behavior and invariants: Aggregation matches cards by ID, keeps the origin title as the translation, uses the study-language title and language code, and copies `voice` and `transcription` from their respective study-language fields.
+- Enforcement boundary: `AggregateDataUseCaseImpl` and its `LearnerTests` regression coverage.
+- Current behavior: Aggregation preserves the translated card's voice resource and transcription separately, while matching card IDs and retaining the origin card's category assignment and picture.
+- Regression coverage: `LearnerTests.testRemoteAggregationPreservesTranslatedCardFieldsAndMatchesByID` checks matched-card field mapping and omission of unmatched cards.
+- Known limitations: The test uses fixture data and does not validate the remote repository's live payloads.
+
 ## FEAT-IMPORT-001: Parse imported word pairs consistently
 - Type: Feature
 - Status: Current
@@ -125,8 +137,8 @@
 - Expected behavior and invariants: UI state changes occur on the main actor; asynchronous work is awaited before dependent state changes; empty collections and malformed external data do not crash the app; persistence and network failures remain visible to callers.
 - Enforcement boundary: `SWIFT_VERSION` settings in `Learner/Learner.xcodeproj/project.pbxproj`, Swift source files in `Learner/Learner/` and `Learner/LearnerImport/`, and the shared `Learner` scheme.
 - Current behavior: App, import extension, unit-test, and UI-test targets use Swift 6 language mode. UI and Core Data access are main-actor isolated; remote values crossing concurrency boundaries are Sendable. Network image loading and reachability checks are asynchronous. Import parsing rejects empty pairs, retains text after the first delimiter, and avoids force-unwrapped settings or navigation state. Quiz options contain distinct choices and reject unavailable answers.
-- Regression coverage: The `Learner` scheme's unit tests run on an iOS Simulator and cover API response handling, both quiz directions, and shared word-pair parsing. The project also builds the main app, import extension, unit-test target, and UI-test target in Swift 6 mode. Core Data queue use and broader screen-level behavior have no focused assertions.
-- Known limitations: Build verification does not assess runtime behavior on physical devices or prove thread safety for code paths not exercised by the compiler. The app still relies on the configured remote repository data and app-group entitlements at runtime.
+- Regression coverage: The unit tests cover API URL, transport, HTTP response, and decoding outcomes; remote aggregation; Core Data conversion and identifier bounds; both quiz directions; navigation state; imported-word persistence; and shared word-pair parsing. The UI test covers compact-width Settings and Imported words navigation. The project also builds the app, import extension, and both test targets in Swift 6 mode.
+- Known limitations: Core Data queue behavior and broader rendered screen interactions have no focused assertions. Build verification does not assess runtime behavior on physical devices or prove thread safety for code paths not exercised by the compiler. The app still relies on configured remote repository data and app-group entitlements at runtime.
 
 ## BUG-APP-004: Support iOS 15 navigation and deployment
 - Type: Bug
@@ -166,8 +178,4 @@
 
 ## API client behavior
 
-`APIClientTests.swift` covers successful JSON decoding, rejection of non-2xx HTTP responses, and decoding failures. The client throws a bad-URL error for malformed endpoints, but the current unit tests do not cover that path. Add regression coverage when changing these behaviors.
-
-The project also contains general and UI test targets. The unit-test target covers API responses, quiz behavior in both directions, and shared word-pair parsing. Keep test status claims limited to assertions present in the current tests.
-
-The shared Xcode scheme includes the defined `LearnerUITests` target. The unit-test target covers API decoding and HTTP responses, quiz behavior in both directions, and the shared word-pair parser. Core Data queue use and broader screen-level behavior are not covered by focused assertions.
+`APIClientTests.swift` covers successful JSON decoding, malformed URLs, non-HTTP responses, non-2xx HTTP responses, decoding failures, and transport-error propagation. Remote aggregation and local Core Data conversion have focused tests in `LearnerTests.swift`. The shared Xcode scheme also includes the `LearnerUITests` target. Core Data queue behavior and broader rendered screen interactions remain outside focused automated assertions.

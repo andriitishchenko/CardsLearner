@@ -33,7 +33,7 @@ final class AggregateDataUseCaseImpl: AggregateDataUseCase, Sendable {
                                          translate: item.title,
                                          localCode: learnCards.lang,
                                          picture: item.picture,
-                                         voice: lngCard.transcription,
+                                         voice: lngCard.voice,
                                          transcription: lngCard.transcription)
                                         
                     modelCard.append(card)

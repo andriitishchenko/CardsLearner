@@ -85,4 +85,45 @@ class APIClientTests: XCTestCase {
             }
         }
     }
+
+    func testPerformRequestRejectsMalformedURL() async {
+        do {
+            let _: String = try await apiClient.performRequest(endpoint: "/relative/path")
+            XCTFail("Expected URLError.badURL to be thrown")
+        } catch let error as URLError {
+            XCTAssertEqual(error.code, .badURL)
+        } catch {
+            XCTFail("Expected URLError.badURL, received \(error)")
+        }
+    }
+
+    func testPerformRequestRejectsNonHTTPResponse() async {
+        let url = URL(string: "https://example.com/test")!
+        mockURLSession.response = URLResponse(
+            url: url,
+            mimeType: nil,
+            expectedContentLength: 0,
+            textEncodingName: nil
+        )
+
+        do {
+            let _: String = try await apiClient.performRequest(endpoint: url.absoluteString)
+            XCTFail("Expected APIError.nonHTTPResponse to be thrown")
+        } catch {
+            XCTAssertEqual(error as? APIError, .nonHTTPResponse)
+        }
+    }
+
+    func testPerformRequestPropagatesTransportError() async {
+        mockURLSession.error = URLError(.notConnectedToInternet)
+
+        do {
+            let _: String = try await apiClient.performRequest(endpoint: "https://example.com/test")
+            XCTFail("Expected the transport error to be thrown")
+        } catch let error as URLError {
+            XCTAssertEqual(error.code, .notConnectedToInternet)
+        } catch {
+            XCTFail("Expected URLError.notConnectedToInternet, received \(error)")
+        }
+    }
 }
